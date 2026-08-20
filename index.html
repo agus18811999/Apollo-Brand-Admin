@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Control Center | Apollo Brand</title>
+    
     <!-- Title & SEO Apollo Brand -->
     
     
@@ -15,13 +16,17 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!-- Library Enkripsi SHA-256 (Wajib untuk Login Admin) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <!-- Library untuk Export Dokumen Nota ke PDF & PNG HD (TAMBAHKAN DI HEAD) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Chart.js untuk 6 Grafik Analitik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -126,8 +131,53 @@
         }
     </style>
 </head>
-<body class="text-slate-200 font-sans antialiased min-h-screen flex" x-data="adminApp()" x-init="initApp()">
+<body class="text-slate-200 font-sans antialiased min-h-screen bg-pb-bg selection:bg-cyan-500 selection:text-slate-950" 
+      x-data="adminApp()" x-init="initAdminSecurity()">
+      <div x-show="!isAdminAuthenticated" class="fixed inset-0 z-[999] flex items-center justify-center bg-[#030014] overflow-hidden" x-cloak>
+        
+        <!-- Animated Security Background -->
+        <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[100px] animate-pulse pointer-events-none"></div>
 
+        <!-- Glassmorphism Login Terminal -->
+        <div class="w-full max-w-md p-8 sm:p-10 bg-slate-900/60 backdrop-blur-2xl border border-white/10 border-t-cyan-400/50 rounded-[32px] shadow-[0_30px_80px_rgba(0,0,0,0.8),0_0_40px_rgba(6,182,212,0.1)] relative z-10 transform transition-all">
+            
+            <div class="text-center mb-8">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-950 border border-slate-700 text-cyan-400 flex items-center justify-center text-2xl shadow-inner mx-auto mb-4">
+                    <i class="fa-solid fa-fingerprint"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white tracking-tight">Apollo Core Gateway</h2>
+                <p class="text-xs text-slate-400 font-mono mt-2">Enterprise Control Center Authorization</p>
+            </div>
+
+            <form @submit.prevent="verifyAdminAccess()" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">
+                        Security Passcode
+                    </label>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                        <input type="password" x-model="adminPasscode" required placeholder="••••••••" 
+                               class="w-full bg-slate-950 border border-white/10 focus:border-cyan-400 focus:outline-none rounded-xl pl-10 pr-4 py-3.5 text-sm text-center text-cyan-400 font-mono tracking-[0.5em] transition shadow-inner">
+                    </div>
+                </div>
+
+                <button type="submit" :disabled="isValidatingAdmin" 
+                        class="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black rounded-xl text-xs uppercase tracking-[0.2em] transition duration-300 shadow-[0_0_20px_rgba(6,182,212,0.3)] disabled:opacity-50">
+                    <span x-text="isValidatingAdmin ? 'Verifying Integrity...' : 'Authorize Access'"></span>
+                </button>
+            </form>
+            
+            <p class="text-center text-[9px] text-slate-600 font-mono mt-6">
+                <i class="fa-solid fa-shield-halved mr-1 text-emerald-500/50"></i> Encrypted Session &bull; Restrict Unauthorized Access
+            </p>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- LAYER 2: DASHBOARD ADMIN UTAMA (HANYA MUNCUL JIKA AUTHENTICATED) -->
+    <!-- ========================================================================= -->
+    <div x-show="isAdminAuthenticated" class="flex min-h-screen w-full" x-cloak>
     <!-- SIDEBAR -->
    <!-- SIDEBAR ADMIN APOLLO BRAND (ULTRA-PREMIUM ENTERPRISE CONTROL CENTER) -->
 <style>
@@ -214,6 +264,17 @@
                 </div>
                 <i class="fa-solid fa-chevron-right text-[9px] opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
             </button>
+            <!-- Menu: Customer Analysis (TAMBAHAN BARU) -->
+<button @click="switchTab('customer_analysis')" 
+        :class="currentTab === 'customer_analysis' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#06b6d4]"></span>
+        <i class="fa-solid fa-filter-circle-dollar w-4 text-center text-sm" :class="currentTab === 'customer_analysis' ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-300'"></i>
+        <span class="truncate">Customer Analysis</span>
+    </div>
+    <span class="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">FUNNEL</span>
+</button>
         </div>
 
         <!-- SECTION 2: OPERATIONS & SERVICES -->
@@ -247,6 +308,17 @@
                 </div>
                 <i class="fa-solid fa-chevron-right text-[9px] opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
             </button>
+            <!-- Menu: Control Coin System (TAMBAHAN BARU) -->
+<button @click="switchTab('coins')" 
+        :class="currentTab === 'coins' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-amber-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#f59e0b]"></span>
+        <i class="fa-solid fa-coins w-4 text-center text-sm" :class="currentTab === 'coins' ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-300'"></i>
+        <span class="truncate">Control Coin</span>
+    </div>
+    <span class="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">REWARD</span>
+</button>
             <!-- Menu: Enterprise Packages Set (TAMBAHAN BARU) -->
 <button @click="switchTab('packages')" 
         :class="currentTab === 'packages' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
@@ -257,6 +329,28 @@
         <span class="truncate">Enterprise Packages</span>
     </div>
     <i class="fa-solid fa-chevron-right text-[9px] opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+</button>
+<!-- Menu: History & Log Transaksi (TAMBAHAN BARU) -->
+<button @click="switchTab('history')" 
+        :class="currentTab === 'history' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-emerald-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#10b981]"></span>
+        <i class="fa-solid fa-clock-rotate-left w-4 text-center text-sm" :class="currentTab === 'history' ? 'text-emerald-400' : 'text-slate-400 group-hover:text-emerald-300'"></i>
+        <span class="truncate">History Transaksi</span>
+    </div>
+    <span class="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">LOG</span>
+</button>
+<!-- Menu: Nota Pembayaran (TAMBAHAN BARU) -->
+<button @click="switchTab('invoices')" 
+        :class="currentTab === 'invoices' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#06b6d4]"></span>
+        <i class="fa-solid fa-file-invoice-dollar w-4 text-center text-sm" :class="currentTab === 'invoices' ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-300'"></i>
+        <span class="truncate">Nota Pembayaran</span>
+    </div>
+    <span class="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">PDF/PNG</span>
 </button>
 
             <!-- Menu 4: Inventory & Barcode -->
@@ -302,6 +396,16 @@
                 </div>
                 <i class="fa-solid fa-chevron-right text-[9px] opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
             </button>
+            <!-- Menu: Flash Sale Pop-Up (TAMBAHAN BARU) -->
+<button @click="switchTab('popup')" 
+        :class="currentTab === 'popup' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-pink-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#ec4899]"></span>
+        <i class="fa-solid fa-gift w-4 text-center text-sm" :class="currentTab === 'popup' ? 'text-pink-400' : 'text-slate-400 group-hover:text-pink-300'"></i>
+        <span class="truncate">Flash Sale Pop-Up</span>
+    </div>
+</button>
         </div>
 
     </nav>
@@ -406,6 +510,14 @@
                :class="{'fa-spin text-purple-400': isRefreshing}"></i> 
             <span class="hidden xs:inline" x-text="isRefreshing ? 'Syncing...' : 'Refresh Data'"></span>
         </button>
+        <!-- LIVE AUTO-SYNC STATUS BADGE (REAL-TIME ENGINE) -->
+        <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold shrink-0">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+            </span>
+            <span x-text="isAutoSyncing ? 'Syncing New Data...' : 'Live Auto-Sync Active'"></span>
+        </div>
         
         <!-- Admin Profile Composite Badge -->
         <div class="flex items-center gap-2.5 sm:gap-3 pl-2 sm:pl-3 border-l border-white/10">
@@ -513,6 +625,7 @@
         </div>
     </div>
 </div>
+
 
         <!-- CONTENT AREA -->
         <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
@@ -990,7 +1103,8 @@
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-                            <span class="text-[10px] text-slate-400 font-mono" x-text="order.transactionDate"></span>
+                            <span class="text-[10px] text-slate-400 font-mono" x-text="formatDateDisplay(order.transactionDate)"></span>
+                      
                         </div>
                         <h3 class="text-lg sm:text-xl font-mono font-bold text-white tracking-tight flex items-center gap-2">
                             <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400" 
@@ -1494,6 +1608,402 @@
     </div>
 
 </div>
+<!-- ========================================================================= -->
+<!-- TAB: CONTROL COIN & REWARD LEDGER ADMIN APOLLO BRAND (GOLD CYBER MATRIX) -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Control Coin Apollo */
+    .apollo-coin-panel {
+        background: linear-gradient(155deg, rgba(25, 18, 40, 0.7) 0%, rgba(5, 2, 18, 0.85) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(245, 158, 11, 0.4); /* Amber Gold Glow */
+        border-left: 1px solid rgba(168, 85, 247, 0.25);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .coin-kpi-card {
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 22px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .coin-kpi-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(245, 158, 11, 0.4);
+        box-shadow: 0 15px 35px -10px rgba(245, 158, 11, 0.2);
+    }
+
+    .coins-glow-ambient {
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .btn-coin-credit {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #34d399;
+        transition: all 0.25s ease;
+    }
+    .btn-coin-credit:hover {
+        background: #10b981;
+        color: #030014;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-coin-debit {
+        background: rgba(244, 63, 94, 0.1);
+        border: 1px solid rgba(244, 63, 94, 0.3);
+        color: #fb7185;
+        transition: all 0.25s ease;
+    }
+    .btn-coin-debit:hover {
+        background: #f43f5e;
+        color: #030014;
+        box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+    }
+</style>
+
+<div x-show="currentTab === 'coins' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. HEADER SECTION & KPI OVERVIEW -->
+    <div class="apollo-coin-panel p-6 sm:p-7 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+        <div class="coins-glow-ambient"></div>
+
+        <div class="space-y-1 relative z-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-widest">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                Apollo Reward Points &bull; Loyalty Ledger
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
+                <i class="fa-solid fa-coins text-amber-400 text-lg"></i>
+                <span>Control Coin &amp; Reward Management</span>
+            </h3>
+            <p class="text-xs text-slate-400 font-light">Kelola saldo koin klien, berikan kompensasi koin manual atas keluhan, dan pantau riwayat mutasi kredit/debit secara transparan.</p>
+        </div>
+
+        <div class="flex items-center gap-3 relative z-10">
+            <button type="button" @click="fetchCoinAdminData()" 
+                    class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right text-amber-400" :class="{'fa-spin': isRefreshing}"></i>
+                <span>Sync Saldo</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. KPI METRIC SUMMARY CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        
+        <!-- KPI 1: Total Koin Beredar -->
+        <div class="coin-kpi-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-coins text-xs"></i>
+                <span>Koin Beredar</span>
+            </span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500" 
+                x-text="totalCirculatingCoins + ' Koin'"></h4>
+            <p class="text-[11px] text-slate-400">Total saldo koin seluruh klien aktif</p>
+        </div>
+
+        <!-- KPI 2: Valuasi Rupiah Koin -->
+        <div class="coin-kpi-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-cyan-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-vault text-xs"></i>
+                <span>Valuasi Diskon</span>
+            </span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-cyan-300" 
+                x-text="formatRupiah(totalCoinsValuation)"></h4>
+            <p class="text-[11px] text-slate-400">Kurs konversi (1 Koin = Rp 1.000)</p>
+        </div>
+
+        <!-- KPI 3: Klien Pemilik Koin -->
+        <div class="coin-kpi-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-purple-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-users text-xs"></i>
+                <span>Klien Pemegang Koin</span>
+            </span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-purple-300" 
+                x-text="clientsWithCoinsCount + ' Klien'"></h4>
+            <p class="text-[11px] text-slate-400">Pengguna terdaftar dengan saldo &gt; 0</p>
+        </div>
+
+        <!-- KPI 4: Total Log Mutasi -->
+        <div class="coin-kpi-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-receipt text-xs"></i>
+                <span>Log Transaksi Koin</span>
+            </span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-emerald-400" 
+                x-text="coinLogs.length + ' Log'"></h4>
+            <p class="text-[11px] text-slate-400">Catatan perolehan &amp; penukaran</p>
+        </div>
+
+    </div>
+
+    <!-- 3. BENTO SPLIT: DIREKTORI SALDO KLIEN (KIRI) & AUDIT LOG MUTASI (KANAN) -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        
+        <!-- SISI KIRI: Tabel Direktori Saldo Klien (7 Kolom Desktop) -->
+        <div class="xl:col-span-7 apollo-coin-panel border-white/10 overflow-hidden space-y-4 p-5 sm:p-6">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-amber-400"></i>
+                        <span>Direktori Saldo Koin Klien</span>
+                    </h4>
+                    <p class="text-[10px] text-slate-400">Daftar klien terdaftar beserta opsi penyesuaian saldo manual.</p>
+                </div>
+
+                <!-- Search User Filter -->
+                <div class="relative w-full sm:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input x-model="coinSearch" 
+                           type="text" 
+                           placeholder="Cari Nama, Email, ID..." 
+                           class="w-full bg-slate-950/80 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400 transition font-sans">
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-white/[0.03] text-[9px] uppercase tracking-[0.2em] text-slate-400 border-b border-white/10 font-mono">
+                        <tr>
+                            <th class="py-3 px-4 font-bold">Klien</th>
+                            <th class="py-3 px-4 font-bold">Kontak</th>
+                            <th class="py-3 px-4 font-bold">Saldo Koin</th>
+                            <th class="py-3 px-4 text-center font-bold">Aksi Mutasi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <template x-for="user in filteredCoinUsers" :key="user.idUser">
+                            <tr class="hover:bg-white/[0.03] transition">
+                                
+                                <!-- Klien Info -->
+                                <td class="py-3 px-4">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-amber-400 to-purple-600 flex items-center justify-center text-slate-950 font-bold text-[11px] shrink-0 font-sans"
+                                             x-text="(user.namaLengkap || 'U').charAt(0).toUpperCase()"></div>
+                                        <div class="min-w-0 max-w-[160px]">
+                                            <p class="font-bold text-white truncate" x-text="user.namaLengkap"></p>
+                                            <p class="text-[9px] text-slate-500 font-mono truncate" x-text="user.idUser"></p>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Kontak -->
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    <p class="text-[11px] text-slate-300 font-mono truncate max-w-[140px]" x-text="user.email"></p>
+                                    <p class="text-[10px] text-emerald-400 font-mono" x-text="user.noWa"></p>
+                                </td>
+
+                                <!-- Saldo Koin -->
+                                <td class="py-3 px-4 whitespace-nowrap">
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 font-mono font-bold text-xs shadow-sm">
+                                        <i class="fa-solid fa-coins text-[10px] text-amber-400"></i>
+                                        <span x-text="user.coins + ' Koin'"></span>
+                                    </div>
+                                    <span class="text-[9px] text-slate-500 block font-mono mt-0.5" x-text="formatRupiah(user.coins * 1000)"></span>
+                                </td>
+
+                                <!-- Aksi Mutasi (+ / -) -->
+                                <td class="py-3 px-4 text-center whitespace-nowrap">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <button type="button" 
+                                                @click="openCoinMutationModal(user, 'CREDIT')" 
+                                                class="px-2.5 py-1 rounded-lg btn-coin-credit text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" 
+                                                title="Tambah Koin">
+                                            <i class="fa-solid fa-plus text-[9px]"></i>
+                                            <span>Tambah</span>
+                                        </button>
+                                        <button type="button" 
+                                                @click="openCoinMutationModal(user, 'DEBIT')" 
+                                                class="px-2.5 py-1 rounded-lg btn-coin-debit text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" 
+                                                title="Kurangi Koin">
+                                            <i class="fa-solid fa-minus text-[9px]"></i>
+                                            <span>Kurang</span>
+                                        </button>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </template>
+
+                        <template x-if="filteredCoinUsers.length === 0">
+                            <tr>
+                                <td colspan="4" class="py-12 text-center text-slate-500 font-mono text-xs">
+                                    Tidak ada data klien yang cocok dengan pencarian.
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <!-- SISI KANAN: Live Audit Log Ledger Koin (5 Kolom Desktop) -->
+        <div class="xl:col-span-5 apollo-coin-panel border-white/10 p-5 sm:p-6 space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <div>
+                    <h4 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i>
+                        <span>Audit Log Mutasi Koin</span>
+                    </h4>
+                    <p class="text-[10px] text-slate-400">50 riwayat mutasi terbaru di sistem.</p>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[8px] font-mono font-bold bg-white/5 text-slate-300 border border-white/10" x-text="coinLogs.length + ' Entri'"></span>
+            </div>
+
+            <!-- Scrollable Log List -->
+            <div class="space-y-2.5 max-h-[500px] overflow-y-auto pr-1 hide-scroll">
+                <template x-for="log in coinLogs" :key="log.idLog">
+                    <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-start justify-between gap-3 text-xs hover:border-amber-500/30 transition">
+                        <div class="space-y-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.2 rounded text-[8px] font-mono font-bold uppercase tracking-wider border"
+                                      :class="log.type === 'CREDIT' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border-rose-500/30'"
+                                      x-text="log.type === 'CREDIT' ? 'TAMBAH (+)' : 'POTONG (-)'"></span>
+                                <span class="font-mono text-[10px] text-cyan-400 font-bold" x-text="log.idUser"></span>
+                            </div>
+                            <p class="text-slate-200 font-medium text-[11px] leading-relaxed" x-text="log.description"></p>
+                           <!-- Di bagian Audit Log Mutasi Koin admin.html, ganti x-text="log.timestamp" menjadi: -->
+<span class="text-[9px] text-slate-500 font-mono block" x-text="formatDateTime(log.timestamp)"></span>
+                        </div>
+
+                        <div class="text-right shrink-0">
+                            <span class="font-mono font-bold text-sm block" 
+                                  :class="log.type === 'CREDIT' ? 'text-emerald-400' : 'text-rose-400'"
+                                  x-text="(log.type === 'CREDIT' ? '+' : '-') + log.amount + ' Koin'"></span>
+                            <span class="text-[9px] font-mono text-slate-500" x-text="formatRupiah(log.amount * 1000)"></span>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="coinLogs.length === 0">
+                    <div class="text-center py-12 text-slate-500 text-xs font-mono">
+                        <i class="fa-solid fa-coins text-2xl block mb-2 opacity-40"></i>
+                        Belum ada riwayat mutasi koin.
+                    </div>
+                </template>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 4. MODAL FORM MUTASI KOIN MANUAL (TAMBAH / KURANG) -->
+    <div x-show="coinModalOpen" class="relative z-[120]" x-cloak>
+        <div x-show="coinModalOpen" 
+             x-transition.opacity 
+             class="fixed inset-0 bg-[#030014]/85 backdrop-blur-2xl" 
+             @click="coinModalOpen = false"></div>
+        
+        <div class="fixed inset-0 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <div x-show="coinModalOpen" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                 class="apollo-product-modal w-full max-w-md relative overflow-hidden my-auto shadow-2xl">
+                
+                <!-- Modal Header -->
+                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/[0.02]">
+                    <div class="space-y-0.5">
+                        <span class="text-[9px] text-amber-400 font-mono font-bold uppercase tracking-wider block">Manual Balance Adjuster</span>
+                        <h3 class="text-lg font-bold text-white tracking-tight">Mutasi Saldo Koin Klien</h3>
+                    </div>
+                    
+                    <button type="button" 
+                            @click.stop="coinModalOpen = false" 
+                            class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition shadow-md cursor-pointer">
+                        <i class="fa-solid fa-xmark text-sm pointer-events-none"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form @submit.prevent="submitCoinMutation()" class="p-6 space-y-4 text-xs">
+                    
+                    <!-- Klien Info Card -->
+                    <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                        <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Target Klien</span>
+                        <p class="text-sm font-bold text-white" x-text="coinMutationForm.userName"></p>
+                        <p class="text-[10px] text-cyan-400 font-mono" x-text="coinMutationForm.idUser + ' (' + coinMutationForm.userEmail + ')'"></p>
+                        <p class="text-[11px] text-amber-400 font-mono font-semibold pt-1" x-text="'Saldo Saat Ini: ' + coinMutationForm.currentCoins + ' Koin'"></p>
+                    </div>
+
+                    <!-- Tipe Mutasi -->
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Tipe Mutasi <span class="text-amber-400">*</span></label>
+                        <select x-model="coinMutationForm.type" class="w-full apollo-product-input px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                            <option value="CREDIT" class="bg-slate-950 text-emerald-400">TAMBAH KOIN (+) &bull; Reward / Kompensasi Keluhan</option>
+                            <option value="DEBIT" class="bg-slate-950 text-rose-400">KURANGI KOIN (-) &bull; Penyesuaian / Pembatalan</option>
+                        </select>
+                    </div>
+
+                    <!-- Jumlah Koin -->
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Jumlah Koin <span class="text-amber-400">*</span></label>
+                        <div class="relative">
+                            <i class="fa-solid fa-coins absolute left-3.5 top-1/2 -translate-y-1/2 text-amber-400 text-xs"></i>
+                            <input type="number" min="1" x-model.number="coinMutationForm.amount" required placeholder="Contoh: 15" 
+                                   class="w-full apollo-product-input pl-9 pr-4 py-2.5 text-xs text-white font-mono font-bold">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1 font-mono">
+                            Setara potongan: <strong class="text-white" x-text="formatRupiah(coinMutationForm.amount * 1000)"></strong>
+                        </p>
+                    </div>
+
+                    <!-- Alasan / Keterangan Mutasi -->
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Alasan / Catatan Mutasi <span class="text-amber-400">*</span></label>
+                        <textarea x-model="coinMutationForm.description" required rows="2" 
+                                  placeholder="Contoh: Kompensasi revisi tiket #APL-613414 atau Bonus Pelanggan Loyal..." 
+                                  class="w-full apollo-product-input px-3.5 py-2.5 text-xs text-white resize-none leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="pt-3 border-t border-white/10 flex justify-end gap-2.5">
+                        <button type="button" @click="coinModalOpen = false" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold uppercase tracking-wider transition">
+                            Batal
+                        </button>
+                        <button type="submit" :disabled="isMutatingCoins" 
+                                class="px-6 py-2.5 rounded-xl text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg"
+                                :class="coinMutationForm.type === 'CREDIT' ? 'bg-gradient-to-r from-emerald-400 to-teal-500' : 'bg-gradient-to-r from-rose-500 to-pink-600 text-white'">
+                            <template x-if="isMutatingCoins">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-spinner fa-spin"></i> Memproses...</span>
+                            </template>
+                            <template x-if="!isMutatingCoins">
+                                <span x-text="coinMutationForm.type === 'CREDIT' ? 'Tambah Koin Klien' : 'Tarik Koin Klien'"></span>
+                            </template>
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- ========================================================================= -->
 <!-- END TAB 3: USERS & DATABASE ADMIN APOLLO BRAND -->
 
             <!-- TAB 4: SYSTEM TOOLS -->
@@ -2647,6 +3157,1557 @@
 
 </div>
 <!-- ========================================================================= -->
+<!-- TAB: HISTORY & AUDIT LOG TRANSAKSI ADMIN APOLLO BRAND (ENTERPRISE MATRIX) -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus History Ledger Apollo */
+    .apollo-history-panel {
+        background: linear-gradient(155deg, rgba(20, 15, 45, 0.6) 0%, rgba(5, 2, 18, 0.8) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(16, 185, 129, 0.35); /* Emerald Glow */
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .apollo-history-card {
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 24px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .apollo-history-input {
+        background: rgba(3, 0, 20, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #f8fafc;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .apollo-history-input:focus {
+        outline: none;
+        border-color: #10b981;
+        background: rgba(3, 0, 20, 0.95);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.25), inset 0 0 8px rgba(16, 185, 129, 0.05);
+    }
+
+    /* Action Buttons */
+    .btn-export-xlsx {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-export-xlsx:hover {
+        box-shadow: 0 0 35px rgba(16, 185, 129, 0.6);
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    .btn-export-csv-direct {
+        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+        box-shadow: 0 0 25px rgba(6, 182, 212, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-export-csv-direct:hover {
+        box-shadow: 0 0 35px rgba(6, 182, 212, 0.55);
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    .history-detail-modal {
+        background: linear-gradient(165deg, rgba(16, 12, 38, 0.96) 0%, rgba(3, 0, 20, 0.98) 100%);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(16, 185, 129, 0.4);
+        border-radius: 32px;
+        box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.95), 0 0 50px rgba(16, 185, 129, 0.15);
+    }
+</style>
+
+<!-- Load SheetJS Library untuk Export XLSX Instan di Browser -->
+
+<div x-show="currentTab === 'history' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. TOP OVERVIEW & STATS BAR -->
+    <div class="apollo-history-panel p-6 sm:p-7 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-widest">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Audit Trail &amp; Transaction Ledger
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Log Riwayat Transaksi Pelanggan</h3>
+            <p class="text-xs text-slate-400 font-light">Pantau seluruh catatan transaksi klien (Nama, Email, No. WA, Waktu, Detail Layanan, dan Nilai Nominal) dengan opsi ekspor data siap audit.</p>
+        </div>
+
+        <!-- KPI Quick Metric Capsules -->
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+            <div class="px-4 py-2.5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Total Log</span>
+                    <span class="text-sm font-bold font-mono text-white" x-text="filteredHistory.length + ' Transaksi'"></span>
+                </div>
+            </div>
+
+            <div class="px-4 py-2.5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-vault"></i>
+                </div>
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Total Akumulasi</span>
+                    <span class="text-sm font-bold font-mono text-emerald-400" x-text="formatRupiah(historyGrossTotal)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. FILTER & EXPORT TOOLBAR (SEARCH + DOWNLOAD XLSX & CSV) -->
+    <div class="apollo-history-card p-5 sm:p-6 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+        
+        <!-- Search Input Field -->
+        <div class="relative flex-1 max-w-xl">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input x-model="historySearch" 
+                   type="text" 
+                   placeholder="Cari ID Tiket, Nama Klien, Email, No. WA, atau Layanan..." 
+                   class="w-full apollo-history-input pl-10 pr-10 py-3 text-xs sm:text-sm placeholder:text-slate-500 font-sans">
+            <button x-show="historySearch" 
+                    @click="historySearch = ''" 
+                    class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Filter Dropdown & Export Action Cluster -->
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+            
+            <!-- Status Filter -->
+            <div class="relative w-full sm:w-auto">
+                <select x-model="historyStatusFilter" 
+                        class="w-full sm:w-auto apollo-history-input px-4 py-3 text-xs font-semibold appearance-none cursor-pointer pr-10 bg-slate-950">
+                    <option value="Semua" class="bg-slate-950 text-white">Semua Status</option>
+                    <option value="Selesai" class="bg-slate-950 text-emerald-400">Selesai</option>
+                    <option value="Sedang Diproses" class="bg-slate-950 text-cyan-400">Sedang Diproses</option>
+                    <option value="Menunggu Konfirmasi" class="bg-slate-950 text-pink-400">Menunggu Konfirmasi</option>
+                    <option value="Menunggu Sparepart" class="bg-slate-950 text-amber-400">Pending / Review</option>
+                    <option value="Menunggu Estimasi Biaya" class="bg-slate-950 text-indigo-400">Menunggu Estimasi</option>
+                </select>
+                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </span>
+            </div>
+
+            <!-- TOMBOL DOWNLOAD .XLSX (MICROSOFT EXCEL) -->
+            <button type="button" 
+                    @click="exportHistoryXLSX()" 
+                    class="btn-export-xlsx px-5 py-3 rounded-xl text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shrink-0 shadow-lg"
+                    title="Unduh format spreadsheet .XLSX">
+                <i class="fa-solid fa-file-excel text-sm"></i>
+                <span>Download .XLSX</span>
+            </button>
+
+            <!-- TOMBOL DOWNLOAD .CSV -->
+            <button type="button" 
+                    @click="exportHistoryCSV()" 
+                    class="btn-export-csv-direct px-5 py-3 rounded-xl text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shrink-0 shadow-lg"
+                    title="Unduh format tabel .CSV">
+                <i class="fa-solid fa-file-csv text-sm"></i>
+                <span>Download .CSV</span>
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 3. TRANSACTION LEDGER TABLE (HIGH-TECH MATRIX) -->
+    <div class="apollo-history-panel border-white/10 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                
+                <!-- Table Header -->
+                <thead class="bg-white/[0.03] text-[10px] uppercase tracking-[0.2em] text-slate-400 border-b border-white/10 font-mono">
+                    <tr>
+                        <th class="py-4 px-5 font-bold">ID Transaksi &amp; Waktu</th>
+                        <th class="py-4 px-5 font-bold">Klien &amp; Email</th>
+                        <th class="py-4 px-5 font-bold">WhatsApp</th>
+                        <th class="py-4 px-5 font-bold">Rincian Layanan</th>
+                        <th class="py-4 px-5 font-bold">Pembayaran</th>
+                        <th class="py-4 px-5 font-bold">Nominal (IDR)</th>
+                        <th class="py-4 px-5 font-bold">Status</th>
+                        <th class="py-4 px-5 text-center font-bold">Rincian</th>
+                    </tr>
+                </thead>
+
+                <!-- Table Body -->
+                <tbody class="divide-y divide-white/5 text-xs">
+                    <template x-for="item in filteredHistory" :key="item.idTransaksi">
+                        <tr class="hover:bg-white/[0.03] transition-colors duration-200 group">
+                            
+                            <!-- Col 1: ID Tiket & Timestamp -->
+                            <td class="py-4 px-5 whitespace-nowrap">
+                                <span class="font-mono font-bold text-cyan-400 text-xs block" x-text="item.idTransaksi"></span>
+                                <span class="text-[10px] text-slate-500 font-mono flex items-center gap-1 mt-0.5">
+                                    <i class="fa-regular fa-clock text-[9px]"></i>
+                                  <span x-text="formatDateDisplay(item.transactionDate)"></span>
+                                </span>
+                            </td>
+
+                            <!-- Col 2: Klien & Email -->
+                            <td class="py-4 px-5">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center text-slate-950 font-bold text-[11px] shrink-0 font-sans"
+                                         x-text="(item.customerName || 'U').charAt(0).toUpperCase()"></div>
+                                    <div class="min-w-0 max-w-[180px]">
+                                        <p class="font-bold text-white truncate" x-text="item.customerName"></p>
+                                        <p class="text-[10px] text-slate-400 truncate font-mono" x-text="getUserEmail(item.idUser, item.customerPhone)"></p>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Col 3: WhatsApp Contact -->
+                            <td class="py-4 px-5 whitespace-nowrap">
+                                <a :href="'https://wa.me/' + String(item.customerPhone).replace(/\D/g,'')" 
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-emerald-400 hover:text-emerald-300 transition">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                    <span x-text="item.customerPhone"></span>
+                                </a>
+                            </td>
+
+                            <!-- Col 4: Rincian Layanan / Project -->
+                            <td class="py-4 px-5 max-w-[220px]">
+                                <span class="line-clamp-2 text-slate-300 font-medium text-[11px] leading-relaxed" 
+                                      x-text="item.itemsList.replace(/\n/g, ' • ')"></span>
+                            </td>
+
+                            <!-- Col 5: Channel Pembayaran -->
+                            <td class="py-4 px-5 whitespace-nowrap">
+                                <span class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-mono text-slate-300 font-semibold"
+                                      x-text="item.selectedPayment || 'Transfer'"></span>
+                            </td>
+
+                            <!-- Col 6: Nominal Total -->
+                            <td class="py-4 px-5 whitespace-nowrap font-mono font-bold">
+                                <span :class="item.total === 0 ? 'text-amber-400 text-xs font-normal animate-pulse' : 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 text-sm'"
+                                      x-text="item.total === 0 ? 'Menunggu Estimasi' : formatRupiah(item.total)"></span>
+                            </td>
+
+                            <!-- Col 7: Status Lencana -->
+                            <td class="py-4 px-5 whitespace-nowrap">
+                                <span class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border shadow-sm flex items-center gap-1.5 w-fit"
+                                      :class="item.statusPesanan === 'Selesai' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : (item.statusPesanan === 'Sedang Diproses' ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' : (item.statusPesanan === 'Menunggu Konfirmasi' ? 'bg-pink-500/10 text-pink-400 border-pink-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'))">
+                                    <span class="w-1.5 h-1.5 rounded-full" :class="item.statusPesanan === 'Selesai' ? 'bg-emerald-400' : 'bg-cyan-400 animate-pulse'"></span>
+                                    <span x-text="item.statusPesanan === 'Menunggu Sparepart' ? 'Pending / Review' : item.statusPesanan"></span>
+                                </span>
+                            </td>
+
+                            <!-- Col 8: Aksi Rincian -->
+                            <td class="py-4 px-5 text-center whitespace-nowrap">
+                                <button type="button" 
+                                        @click="openHistoryDetailModal(item)" 
+                                        class="w-8 h-8 rounded-xl bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-400/40 text-slate-300 hover:text-cyan-300 transition flex items-center justify-center text-xs mx-auto shadow-sm" 
+                                        title="Buka Rincian Log Transaksi">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+
+                        </tr>
+                    </template>
+
+                    <!-- Empty State Tabel -->
+                    <template x-if="filteredHistory.length === 0">
+                        <tr>
+                            <td colspan="8" class="py-16 text-center text-slate-500 font-mono text-xs">
+                                <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-600 text-xl mx-auto mb-3">
+                                    <i class="fa-solid fa-receipt"></i>
+                                </div>
+                                <p class="text-slate-400 font-bold text-sm mb-1">Tidak Ada Data Transaksi</p>
+                                <p class="text-slate-500 text-xs">Pencarian atau filter status tidak cocok dengan transaksi manapun.</p>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. MODAL RINCIAN AUDIT LOG TRANSAKSI -->
+    <div x-show="historyModalOpen" class="relative z-[120]" x-cloak>
+        <div x-show="historyModalOpen" 
+             x-transition.opacity 
+             class="fixed inset-0 bg-[#030014]/85 backdrop-blur-2xl" 
+             @click="historyModalOpen = false"></div>
+        
+        <div class="fixed inset-0 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <div x-show="historyModalOpen" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                 class="history-detail-modal w-full max-w-2xl relative overflow-hidden my-auto shadow-2xl">
+                
+                <!-- Modal Header -->
+                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/[0.02]">
+                    <div class="space-y-0.5">
+                        <span class="text-[9px] text-emerald-400 font-mono font-bold uppercase tracking-wider block">Audit Ledger Entry</span>
+                        <h3 class="text-lg sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                            <span>Rincian Transaksi:</span>
+                            <span class="font-mono text-cyan-400" x-text="selectedHistoryItem ? selectedHistoryItem.idTransaksi : ''"></span>
+                        </h3>
+                    </div>
+
+                    <button type="button" 
+                            @click.stop="historyModalOpen = false" 
+                            class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition shadow-md cursor-pointer"
+                            title="Tutup">
+                        <i class="fa-solid fa-xmark text-sm pointer-events-none"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 sm:p-8 space-y-5 max-h-[75vh] overflow-y-auto text-xs" x-show="selectedHistoryItem">
+                    
+                    <!-- Grid 2 Kolom: Klien & Finansial -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5">
+                            <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Informasi Klien</span>
+                            <p class="text-sm font-bold text-white" x-text="selectedHistoryItem ? selectedHistoryItem.customerName : ''"></p>
+                            <p class="text-slate-400 font-mono text-xs" x-text="selectedHistoryItem ? getUserEmail(selectedHistoryItem.idUser, selectedHistoryItem.customerPhone) : ''"></p>
+                            <p class="text-emerald-400 font-mono text-xs font-semibold" x-text="selectedHistoryItem ? selectedHistoryItem.customerPhone : ''"></p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5">
+                            <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Status &amp; Pembayaran</span>
+                            <p class="text-sm font-bold text-white" x-text="selectedHistoryItem ? (selectedHistoryItem.selectedPayment || 'Transfer') : ''"></p>
+                           
+                            <p class="text-[10px] text-slate-500 font-mono" x-text="selectedHistoryItem ? formatDateDisplay(selectedHistoryItem.transactionDate) : ''"></p>
+                            <p class="text-base font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400" 
+                               x-text="selectedHistoryItem ? (selectedHistoryItem.total === 0 ? 'Menunggu Estimasi' : formatRupiah(selectedHistoryItem.total)) : ''"></p>
+                        </div>
+                    </div>
+
+                    <!-- Detail Rincian String -->
+                    <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                        <span class="text-[10px] uppercase tracking-widest text-cyan-400 font-bold block">Rincian Lengkap Layanan &amp; Brief:</span>
+                        <div class="text-slate-300 font-medium leading-relaxed whitespace-pre-wrap text-xs bg-black/40 p-4 rounded-xl border border-white/5 font-sans" 
+                             x-text="selectedHistoryItem ? selectedHistoryItem.itemsList : ''"></div>
+                    </div>
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-5 border-t border-white/10 bg-white/[0.02] flex items-center justify-between">
+                    <span class="text-[10px] font-mono text-slate-500">Log Entry Verified &bull; SSL Encrypted</span>
+                    <button type="button" 
+                            @click="historyModalOpen = false" 
+                            class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition">
+                        Tutup
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- ========================================================================= -->
+<!-- TAB: NOTA PEMBAYARAN & INVOICE GENERATOR ADMIN APOLLO BRAND -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Panel Invoice Apollo */
+    .apollo-invoice-panel {
+        background: linear-gradient(155deg, rgba(20, 15, 45, 0.6) 0%, rgba(5, 2, 18, 0.8) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(6, 182, 212, 0.35);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+        position: relative;
+    }
+
+    .apollo-invoice-item {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .apollo-invoice-item:hover {
+        background: rgba(6, 182, 212, 0.06);
+        border-color: rgba(6, 182, 212, 0.3);
+        transform: translateX(4px);
+    }
+    .apollo-invoice-item-active {
+        background: linear-gradient(90deg, rgba(6, 182, 212, 0.15) 0%, rgba(168, 85, 247, 0.08) 100%) !important;
+        border-color: #00f2fe !important;
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+    }
+
+    /* ACTION BUTTONS DOWNLOAD */
+    .btn-dl-pdf {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);
+        transition: all 0.3s ease;
+    }
+    .btn-dl-pdf:hover:not(:disabled) {
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+        transform: translateY(-2px);
+    }
+
+    .btn-dl-png {
+        background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+        transition: all 0.3s ease;
+    }
+    .btn-dl-png:hover:not(:disabled) {
+        box-shadow: 0 0 30px rgba(6, 182, 212, 0.6);
+        transform: translateY(-2px);
+    }
+
+    /* ========================================================================= */
+    /* DOKUMEN FISIK NOTA (OFFICIAL PRINTABLE CANVAS RESOLUSI TINGGI) */
+    /* ========================================================================= */
+    #apollo-invoice-paper {
+        background-color: #ffffff;
+        color: #0f172a;
+        font-family: 'Inter', -apple-system, sans-serif;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Watermark Latar Belakang */
+    .invoice-watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        font-size: 85px;
+        font-weight: 900;
+        color: rgba(6, 182, 212, 0.035);
+        text-transform: uppercase;
+        letter-spacing: 12px;
+        pointer-events: none;
+        user-select: none;
+        white-space: nowrap;
+    }
+
+    /* Stempel Lunas / Paid Stamp */
+    .paid-stamp {
+        border: 3px solid #10b981;
+        color: #059669;
+        font-family: 'Inter', monospace, sans-serif;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        border-radius: 12px;
+        padding: 6px 16px;
+        transform: rotate(-12deg);
+        display: inline-block;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+</style>
+
+<div x-show="currentTab === 'invoices' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. HEADER SECTION & OVERVIEW -->
+    <div class="apollo-invoice-panel p-6 sm:p-7 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-5">
+        <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-widest">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                Official Receipt &amp; Invoice Center
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Generator Nota Pembayaran Resmi</h3>
+            <p class="text-xs text-slate-400 font-light">Pilih transaksi klien untuk membuat nota pembayaran digital resmi, lalu cetak atau unduh langsung dalam format PDF dan gambar PNG resolusi tinggi.</p>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+            <button type="button" @click="refreshData()" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right text-cyan-400" :class="{'fa-spin': isRefreshing}"></i>
+                <span>Sync Data</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. BENTO SPLIT: SELECTOR TRANSAKSI (KIRI) & PRATINJAU DOKUMEN NOTA (KANAN) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- SISI KIRI: Daftar Pilihan Transaksi (5 Kolom) -->
+        <div class="lg:col-span-5 apollo-invoice-panel p-5 sm:p-6 space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h4 class="text-xs font-bold uppercase tracking-widest text-white flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-cyan-400"></i>
+                    <span>Pilih Transaksi</span>
+                </h4>
+                <span class="text-[10px] font-mono text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20" 
+                      x-text="filteredInvoiceOrders.length + ' Ditemukan'"></span>
+            </div>
+
+            <!-- Search Field -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                <input x-model="invoiceSearch" 
+                       type="text" 
+                       placeholder="Cari ID, Klien, atau WhatsApp..." 
+                       class="w-full bg-slate-950/80 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 transition font-sans">
+            </div>
+
+            <!-- Scrollable Transaction List -->
+            <div class="space-y-2.5 max-h-[600px] overflow-y-auto pr-1 hide-scroll">
+                <template x-for="item in filteredInvoiceOrders" :key="item.idTransaksi">
+                    <div @click="selectInvoiceOrder(item)" 
+                         class="apollo-invoice-item p-3.5 rounded-2xl cursor-pointer flex flex-col justify-between"
+                         :class="selectedInvoice && selectedInvoice.idTransaksi === item.idTransaksi ? 'apollo-invoice-item-active' : ''">
+                        
+                        <div class="flex justify-between items-start mb-1.5">
+                            <div>
+                                <span class="font-mono font-bold text-xs" 
+                                      :class="selectedInvoice && selectedInvoice.idTransaksi === item.idTransaksi ? 'text-white' : 'text-cyan-400'"
+                                      x-text="item.idTransaksi"></span>
+                                <p class="text-xs font-bold text-slate-200 mt-0.5" x-text="item.customerName"></p>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border"
+                                  :class="item.statusPesanan === 'Selesai' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'"
+                                  x-text="item.statusPesanan"></span>
+                        </div>
+
+                        <div class="flex justify-between items-end text-[10px] text-slate-400 pt-2 border-t border-white/5 font-mono">
+                         
+                            <span x-text="formatDateDisplay(item.transactionDate)"></span>
+                            <span class="font-bold text-white text-xs" x-text="item.total === 0 ? 'Menunggu Estimasi' : formatRupiah(item.total)"></span>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="filteredInvoiceOrders.length === 0">
+                    <div class="text-center py-10 text-slate-500 text-xs">
+                        <i class="fa-solid fa-receipt text-2xl block mb-2 opacity-50"></i>
+                        Tidak ada transaksi yang cocok.
+                    </div>
+                </template>
+            </div>
+
+        </div>
+
+        <!-- SISI KANAN: Toolbar Ekspor & Pratinjau Dokumen Nota (7 Kolom) -->
+        <div class="lg:col-span-7 space-y-5">
+            
+            <!-- EXPORT ACTION TOOLBAR -->
+            <div class="apollo-invoice-panel p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-xs font-bold text-white">Ekspor Dokumen Nota:</span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <!-- DOWNLOAD PDF -->
+                    <button type="button" 
+                            @click="downloadInvoicePDF()" 
+                            :disabled="!selectedInvoice || isExportingDoc"
+                            class="btn-dl-pdf px-4 py-2.5 rounded-xl text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <template x-if="isExportingDoc">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                        </template>
+                        <template x-if="!isExportingDoc">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </template>
+                        <span>Unduh .PDF</span>
+                    </button>
+
+                    <!-- DOWNLOAD PNG -->
+                    <button type="button" 
+                            @click="downloadInvoicePNG()" 
+                            :disabled="!selectedInvoice || isExportingDoc"
+                            class="btn-dl-png px-4 py-2.5 rounded-xl text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <template x-if="isExportingDoc">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                        </template>
+                        <template x-if="!isExportingDoc">
+                            <i class="fa-solid fa-file-image"></i>
+                        </template>
+                        <span>Unduh .PNG</span>
+                    </button>
+
+                    <!-- PRINT LANGSUNG -->
+                    <button type="button" 
+                            @click="printInvoiceDirect()" 
+                            :disabled="!selectedInvoice || isExportingDoc"
+                            class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition disabled:opacity-40">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Cetak</span>
+                    </button>
+                </div>
+            </div>
+
+         
+            <!-- ========================================================================= -->
+            <!-- DOKUMEN NOTA RESMI APOLLO BRAND (FIX SPACING DEKLARASI & SUBTOTAL) -->
+            <!-- ========================================================================= -->
+            <style>
+                /* Kunci font dokumen nota agar html2canvas merender dengan presisi tinggi & tajam */
+                #apollo-invoice-paper, #apollo-invoice-paper * {
+                    font-family: Arial, Helvetica, sans-serif !important;
+                    letter-spacing: 0.3px !important;
+                    box-sizing: border-box !important;
+                    text-rendering: geometricPrecision !important;
+                }
+            </style>
+
+            <div class="overflow-x-auto p-2 flex justify-center bg-slate-950/60 rounded-2xl border border-white/5 shadow-inner">
+                
+                <template x-if="selectedInvoice">
+                    <!-- Lembar Dokumen A4 (Layout Alami Tanpa Space Kosong yang Terlalu Besar) -->
+                    <div id="apollo-invoice-paper" 
+                         style="width: 794px; background-color: #ffffff; color: #111827; padding: 48px 52px; position: relative; box-shadow: 0 25px 60px rgba(0,0,0,0.8);"
+                         x-data="{ invoiceData: getInvoiceStructuredData(selectedInvoice) }">
+                        
+                        <!-- 1. HEADER UTAMA (JUDUL NOTA & LOGO BRAND) -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div>
+                                <h1 style="font-size: 22px; font-weight: 900; letter-spacing: 3.5px; text-transform: uppercase; color: #111827; margin: 0; line-height: 1;">
+                                    PRODUCT OR SERVICE INVOICE
+                                </h1>
+                                <div style="font-size: 9px; font-weight: 700; color: #6b7280; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 5px;">
+                                    APOLLO BRAND &bull; ACADEMIC &amp; WEB SOLUTIONS
+                                </div>
+                            </div>
+
+                            <!-- Logo Geometris Apollo Brand -->
+                            <div style="display: flex; align-items: center;">
+                                <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="refLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#00f2fe"/>
+                                            <stop offset="50%" stop-color="#3b82f6"/>
+                                            <stop offset="100%" stop-color="#a855f7"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <rect x="8" y="8" width="84" height="84" rx="20" fill="url(#refLogoGrad)"/>
+                                    <path fill="#ffffff" d="M69.8 24.5c-2.4-2.4-6.6-3.2-10.4-2.4-12.2 2.6-23.7 11.5-29.6 19.8L26 47.7c-.5.8-.8 1.8-.7 2.8l2 11.3-9.5 9.5c-1.3 1.3-1.3 3.5 0 4.8l4.8 4.8c1.3 1.3 3.5 1.3 4.8 0l9.5-9.5 11.3 2c1 .2 2-.1 2.8-.7l5.8-3.8c8.3-5.9 17.2-17.4 19.8-29.6.8-3.8 0-8-2.4-10.4zM54 49c-2.8 2.8-7.3 2.8-10.1 0-2.8-2.8-2.8-7.3 0-10.1 2.8-2.8 7.3-2.8 10.1 0 2.7 2.8 2.7 7.3 0 10.1z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Garis Pemisah Header -->
+                        <div style="height: 1.5px; background-color: #374151; margin-bottom: 22px;"></div>
+
+                        <!-- 2. META DATA TRANSAKSI (INVOICE NR, DATE, DUE DATE) -->
+                        <div style="width: 320px; margin-bottom: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #9ca3af; padding-bottom: 3px; margin-bottom: 5px;">
+                                <span style="font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #111827;">INVOICE NR:</span>
+                                <span style="font-size: 11px; font-weight: 700; font-family: monospace, Courier !important; color: #111827;" x-text="selectedInvoice.idTransaksi"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #9ca3af; padding-bottom: 3px; margin-bottom: 5px;">
+                                <span style="font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #111827;">DATE:</span>
+                                <span style="font-size: 10.5px; color: #374151;" x-text="formatDateDisplay(selectedInvoice.transactionDate)"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #9ca3af; padding-bottom: 3px;">
+                                <span style="font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #111827;">DUE DATE:</span>
+                                <span style="font-size: 10.5px; color: #374151;" x-text="invoiceData.deadline || formatDateDisplay(selectedInvoice.transactionDate)"></span>
+                            </div>
+                        </div>
+
+                        <!-- 3. BILL TO & PAYABLE TO SECTION -->
+                        <div style="display: flex; justify-content: space-between; gap: 24px; margin-bottom: 24px;">
+                            
+                            <!-- Kolom Kiri: BILL TO -->
+                            <div style="flex: 1; border: 1px solid #9ca3af; padding: 12px 14px; min-height: 95px;">
+                                <div style="font-size: 9.5px; font-weight: 900; letter-spacing: 1.2px; text-transform: uppercase; color: #111827; margin-bottom: 6px;">
+                                    BILL TO:
+                                </div>
+                                <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-bottom: 2px;" x-text="selectedInvoice.customerName"></div>
+                                <div style="font-size: 10px; color: #4b5563; line-height: 1.4;" x-show="invoiceData.alamat" x-text="invoiceData.alamat"></div>
+                                <div style="font-size: 10px; color: #4b5563; line-height: 1.4;" x-text="'WA: ' + selectedInvoice.customerPhone"></div>
+                                <div style="font-size: 10px; color: #4b5563; line-height: 1.4;" x-text="getUserEmail(selectedInvoice.idUser, selectedInvoice.customerPhone)"></div>
+                            </div>
+
+                            <!-- Kolom Kanan: PAYABLE TO -->
+                            <div style="flex: 1; padding: 12px 4px 12px 14px;">
+                                <div style="font-size: 9.5px; font-weight: 900; letter-spacing: 1.2px; text-transform: uppercase; color: #111827; margin-bottom: 6px;">
+                                    PAYABLE TO:
+                                </div>
+                                <div style="font-size: 11.5px; font-weight: 800; color: #111827; margin-bottom: 2px;">Apollo Brand Indonesia</div>
+                                <div style="font-size: 10px; color: #4b5563; line-height: 1.4;">Jl. Surabaya RW.2 No.14, Padangan</div>
+                                <div style="font-size: 10px; color: #4b5563; line-height: 1.4;">Bojonegoro, Jawa Timur 62162</div>
+                                <div style="font-size: 10px; color: #4b5563; line-height: 1.4;">+62 812-3440-1237</div>
+                                <div style="font-size: 10px; color: #4b5563; line-height: 1.4;">lobiianewar1234@gmail.com</div>
+                            </div>
+
+                        </div>
+
+                        <!-- 4. TABEL RINCIAN ITEM -->
+                        <div style="margin-bottom: 20px;">
+                            <table style="width: 100%; border-collapse: collapse; border: 1px solid #9ca3af;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid #9ca3af; background-color: #ffffff;">
+                                        <th style="width: 7%; padding: 7px 8px; font-size: 9.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #111827; text-align: center; border-right: 1px solid #9ca3af;">NO.</th>
+                                        <th style="width: 49%; padding: 7px 10px; font-size: 9.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #111827; text-align: left; border-right: 1px solid #9ca3af;">DESCRIPTION</th>
+                                        <th style="width: 10%; padding: 7px 8px; font-size: 9.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #111827; text-align: center; border-right: 1px solid #9ca3af;">QTY</th>
+                                        <th style="width: 17%; padding: 7px 10px; font-size: 9.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #111827; text-align: right; border-right: 1px solid #9ca3af;">PRICE</th>
+                                        <th style="width: 17%; padding: 7px 10px; font-size: 9.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #111827; text-align: right;">TOTAL</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="item in invoiceData.items" :key="item.no">
+                                        <tr style="border-bottom: 1px solid #9ca3af;">
+                                            <td style="padding: 8px 8px; text-align: center; font-size: 10.5px; color: #374151; border-right: 1px solid #9ca3af; vertical-align: top;" x-text="item.no + '.'"></td>
+                                            <td style="padding: 8px 10px; font-size: 10.5px; color: #111827; border-right: 1px solid #9ca3af; vertical-align: top;">
+                                                <div style="font-weight: 700;" x-text="item.title"></div>
+                                                <div x-show="item.desc" style="font-size: 9px; color: #6b7280; margin-top: 2px; font-style: italic;" x-text="item.desc"></div>
+                                            </td>
+                                            <td style="padding: 8px 8px; text-align: center; font-size: 10.5px; color: #374151; border-right: 1px solid #9ca3af; vertical-align: top;">1</td>
+                                            <td style="padding: 8px 10px; text-align: right; font-size: 10.5px; color: #374151; border-right: 1px solid #9ca3af; vertical-align: top; font-family: monospace, Courier !important;" 
+                                                x-text="item.price === 0 ? 'Estimasi' : formatRupiah(item.price)"></td>
+                                            <td style="padding: 8px 10px; text-align: right; font-size: 10.5px; font-weight: 700; color: #111827; vertical-align: top; font-family: monospace, Courier !important;" 
+                                                x-text="item.price === 0 ? 'Estimasi' : formatRupiah(item.price)"></td>
+                                        </tr>
+                                    </template>
+
+                                    <!-- Baris Kosong Pelengkap Grid -->
+                                    <template x-if="invoiceData.items.length < 3">
+                                        <template x-for="n in (3 - invoiceData.items.length)" :key="'empty-' + n">
+                                            <tr style="border-bottom: 1px solid #9ca3af; height: 24px;">
+                                                <td style="border-right: 1px solid #9ca3af;"></td>
+                                                <td style="border-right: 1px solid #9ca3af;"></td>
+                                                <td style="border-right: 1px solid #9ca3af;"></td>
+                                                <td style="border-right: 1px solid #9ca3af;"></td>
+                                                <td></td>
+                                            </tr>
+                                        </template>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 5. DEKLARASI & TOTAL (LANGSUNG TERSAMBUNG TANPA SPACE BESAR) -->
+                        <div style="display: flex; justify-content: space-between; gap: 24px; margin-top: 18px; margin-bottom: 22px;">
+                            
+                            <!-- Sisi Kiri: Deklarasi Legal & Info Bank -->
+                            <div style="flex: 1.1;">
+                                <div style="margin-bottom: 12px;">
+                                    <p style="font-size: 9.5px; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; color: #111827; line-height: 1.45; margin: 0;">
+                                        I DECLARE THAT THE ABOVE INFORMATION IS TRUE AND CORRECT TO THE BEST OF MY KNOWLEDGE
+                                    </p>
+                                    <div style="font-size: 8.5px; color: #6b7280; margin-top: 3px;">
+                                        Dokumen transaksi resmi terverifikasi sistem &bull; Berlaku garansi revisi &amp; NDA.
+                                    </div>
+                                </div>
+
+                                <div style="font-size: 9.5px; line-height: 1.55;">
+                                    <div style="display: flex; margin-bottom: 2px;">
+                                        <span style="font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; width: 90px; color: #111827;">BANK NAME:</span>
+                                        <span style="color: #374151; font-weight: 700;" x-text="selectedInvoice.selectedPayment || 'Transfer Bank BCA / Mandiri'"></span>
+                                    </div>
+                                    <div style="display: flex; margin-bottom: 2px;">
+                                        <span style="font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; width: 90px; color: #111827;">ACCOUNT:</span>
+                                        <span style="font-family: monospace, Courier !important; color: #374151; font-weight: 700;">0812-3440-1237 (QRIS &amp; Transfer)</span>
+                                    </div>
+                                    <div style="display: flex;">
+                                        <span style="font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; width: 90px; color: #111827;">STATUS:</span>
+                                        <span style="font-weight: 800; text-transform: uppercase;"
+                                              :style="selectedInvoice.statusPesanan === 'Selesai' ? 'color: #059669;' : 'color: #0284c7;'" 
+                                              x-text="selectedInvoice.statusPesanan === 'Selesai' ? 'PAID / LUNAS' : selectedInvoice.statusPesanan"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sisi Kanan: Subtotal & Total Amount -->
+                            <div style="flex: 0.9;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #9ca3af; padding-bottom: 3px; margin-bottom: 5px;">
+                                    <span style="font-size: 9.5px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: #374151;">SUBTOTAL:</span>
+                                    <span style="font-size: 11px; font-weight: 700; font-family: monospace, Courier !important; color: #111827;" x-text="formatRupiah(invoiceData.subtotal)"></span>
+                                </div>
+
+                                <div x-show="invoiceData.discount > 0" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #9ca3af; padding-bottom: 3px; margin-bottom: 5px;">
+                                    <span style="font-size: 9.5px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: #059669;">DISCOUNT:</span>
+                                    <span style="font-size: 11px; font-weight: 700; font-family: monospace, Courier !important; color: #059669;" x-text="'- ' + formatRupiah(invoiceData.discount)"></span>
+                                </div>
+
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #111827; padding-bottom: 5px; margin-top: 6px;">
+                                    <span style="font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #111827;">TOTAL AMOUNT:</span>
+                                    <span style="font-size: 13.5px; font-weight: 900; font-family: monospace, Courier !important; color: #111827;" 
+                                          x-text="invoiceData.total === 0 ? 'Menunggu Estimasi' : formatRupiah(invoiceData.total)"></span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- 6. TANDA TANGAN RESMI -->
+                       <!-- 6. TANDA TANGAN RESMI (DENGAN SPACER PROPORSIONAL) -->
+                        <div style="display: flex; justify-content: flex-end; margin-top: 45px; margin-bottom: 35px;">
+                            <div style="width: 220px; text-align: center;">
+                                <div style="font-size: 10.5px; font-weight: 700; color: #111827;">
+                                    Apollo Brand Finance
+                                </div>
+                                
+                                <!-- Spacer Area Tanda Tangan / Stempel Resmi -->
+                                <div style="height: 60px;"></div>
+
+                                <div style="border-bottom: 1.5px solid #374151; margin-bottom: 5px;"></div>
+                                <div style="font-size: 8.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #6b7280;">
+                                    AUTHORIZED SIGNATURE
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 7. FOOTER PENUTUP -->
+                        <div style="border-top: 1.5px solid #374151; padding-top: 12px; text-align: center; margin-top: 10px;">
+                            <span style="font-size: 10px; font-weight: 900; letter-spacing: 2.5px; text-transform: uppercase; color: #111827;">
+                                THANK YOU FOR YOUR PURCHASE
+                            </span>
+                        </div>
+
+                    </div>
+                </template>
+
+                <template x-if="!selectedInvoice">
+                    <div class="apollo-invoice-panel py-20 px-6 text-center border-dashed">
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-cyan-400 text-3xl mx-auto mb-3">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <h4 class="text-base font-bold text-white mb-1">Pilih Transaksi untuk Melihat Nota</h4>
+                        <p class="text-xs text-slate-400 font-light max-w-sm mx-auto">
+                            Klik salah satu transaksi pada daftar di sisi kiri untuk memuat dokumen nota pembayaran.
+                        </p>
+                    </div>
+                </template>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ========================================================================= -->
+<!-- TAB: CUSTOMER ANALYSIS & MARKETING FUNNEL ADMIN APOLLO BRAND -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- TAB: CUSTOMER ANALYSIS & MARKETING FUNNEL ADMIN APOLLO BRAND -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Customer Analysis Apollo */
+    .apollo-funnel-panel {
+        background: linear-gradient(155deg, rgba(20, 15, 45, 0.6) 0%, rgba(5, 2, 18, 0.8) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(6, 182, 212, 0.4);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+        position: relative;
+    }
+
+    .funnel-stage-card {
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 22px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .funnel-stage-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(6, 182, 212, 0.4);
+        box-shadow: 0 15px 35px -10px rgba(6, 182, 212, 0.2);
+    }
+
+    /* Step Progress Bar */
+    .funnel-progress-bg {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 999px;
+        height: 8px;
+        overflow: hidden;
+    }
+    .funnel-progress-fill {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 1s ease-in-out;
+    }
+</style>
+
+<div x-show="currentTab === 'customer_analysis' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. HEADER SECTION & TIMEFRAME SELECTOR -->
+    <div class="apollo-funnel-panel p-6 sm:p-7 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-widest">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                Marketing Funnel &amp; Behavior Analytics
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Customer Analysis &amp; Conversion Funnel</h3>
+            <p class="text-xs text-slate-400 font-light">Analisis alur konversi marketing (Awareness &rarr; Interest &rarr; Consideration &rarr; Desire &rarr; Conversion &rarr; Retention) untuk mengidentifikasi tingkat konversi dan titik penurunan (*drop-off*).</p>
+        </div>
+
+        <!-- Filter Rentang Waktu -->
+        <div class="flex items-center gap-2 bg-slate-950/80 p-1.5 rounded-2xl border border-white/10 shrink-0">
+            <button type="button" @click="changeFunnelFilter('today')" 
+                    :class="funnelTimeFilter === 'today' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-slate-950 font-bold shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'text-slate-400 hover:text-white'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition duration-200">Hari Ini</button>
+            
+            <button type="button" @click="changeFunnelFilter('7days')" 
+                    :class="funnelTimeFilter === '7days' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-slate-950 font-bold shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'text-slate-400 hover:text-white'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition duration-200">7 Hari</button>
+            
+            <button type="button" @click="changeFunnelFilter('30days')" 
+                    :class="funnelTimeFilter === '30days' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-slate-950 font-bold shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'text-slate-400 hover:text-white'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition duration-200">30 Hari</button>
+            
+            <button type="button" @click="changeFunnelFilter('all')" 
+                    :class="funnelTimeFilter === 'all' ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-slate-950 font-bold shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'text-slate-400 hover:text-white'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition duration-200">Semua</button>
+        </div>
+    </div>
+
+    <!-- 2. HIGH-IMPACT KPI SUMMARY CARDS (OVERALL CONVERSION & LTV) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        
+        <div class="funnel-stage-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-cyan-400">Visitor-to-WA Conversion</span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400" 
+                x-text="funnelMetrics.overallConversionRate + '%'"></h4>
+            <p class="text-[11px] text-slate-400">Rasio pengunjung menjadi prospek WA</p>
+        </div>
+
+        <div class="funnel-stage-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-purple-400">Cart-to-WA Conversion</span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-purple-300" 
+                x-text="funnelMetrics.cartToWaRate + '%'"></h4>
+            <p class="text-[11px] text-slate-400">Rasio checkout berlanjut kirim pesan WA</p>
+        </div>
+
+        <div class="funnel-stage-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400">Retention / Repeat Clients</span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-emerald-400" 
+                x-text="funnelMetrics.retentionRate + '%'"></h4>
+            <p class="text-[11px] text-slate-400">Rasio klien memesan lebih dari 1x</p>
+        </div>
+
+        <div class="funnel-stage-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-pink-400">Rata-rata Nilai Transaksi</span>
+            <h4 class="text-xl sm:text-2xl font-black font-mono text-white" 
+                x-text="formatRupiah(funnelMetrics.averageOrderValue)"></h4>
+            <p class="text-[11px] text-slate-400">Average Order Value (AOV)</p>
+        </div>
+
+    </div>
+
+    <!-- 3. VISUAL 5-STAGE MARKETING FUNNEL PIPELINE (WATERFALL STEP MATRIX) -->
+    <div class="apollo-funnel-panel p-6 sm:p-8 space-y-6">
+        
+        <div class="flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+                <h4 class="text-base font-bold text-white tracking-tight">Pipeline Corong Konversi 5 Tahap</h4>
+                <p class="text-xs text-slate-400">Visualisasi penurunan alur dari penjelajahan halaman hingga transaksi final.</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 font-mono text-xs" x-text="'Total Sesi: ' + funnelMetrics.stages.visitors.count"></span>
+        </div>
+
+        <div class="space-y-4">
+            
+            <!-- STAGE 1: AWARENESS / KUNJUNGAN WEBSITE -->
+            <div class="funnel-stage-card p-5 space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center font-mono font-bold text-xs">1</div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span>Awareness (Kunjungan Website)</span>
+                                <span class="px-2 py-0.2 rounded text-[9px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">Stage 1</span>
+                            </h5>
+                            <p class="text-[11px] text-slate-400">Pengguna yang membuka dan mengakses website Apollo Brand.</p>
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="text-lg font-black font-mono text-white" x-text="funnelMetrics.stages.visitors.count + ' User'"></span>
+                        <span class="text-[10px] text-slate-500 block font-mono">100% dari total audience</span>
+                    </div>
+                </div>
+                <div class="funnel-progress-bg">
+                    <div class="funnel-progress-fill bg-gradient-to-r from-cyan-400 to-blue-500 w-full"></div>
+                </div>
+            </div>
+
+            <!-- STAGE 2: INTEREST / SCROLL ENGAGEMENT (>40%) -->
+            <div class="funnel-stage-card p-5 space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center justify-center font-mono font-bold text-xs">2</div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span>Interest (Eksplorasi &amp; Scroll &gt; 40%)</span>
+                                <span class="px-2 py-0.2 rounded text-[9px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/20">Stage 2</span>
+                            </h5>
+                            <p class="text-[11px] text-slate-400">Pengunjung yang membaca dan menelusuri konten ke bawah secara aktif.</p>
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="text-lg font-black font-mono text-purple-300" x-text="funnelMetrics.stages.scrollers.count + ' User'"></span>
+                        <span class="text-[10px] font-mono block" :class="funnelMetrics.stages.scrollers.dropoff > 50 ? 'text-rose-400' : 'text-slate-400'"
+                              x-text="'Konversi: ' + funnelMetrics.stages.scrollers.rate + '% (Drop: -' + funnelMetrics.stages.scrollers.dropoff + '%)'"></span>
+                    </div>
+                </div>
+                <div class="funnel-progress-bg">
+                    <div class="funnel-progress-fill bg-gradient-to-r from-blue-500 to-purple-500" :style="'width: ' + funnelMetrics.stages.scrollers.rate + '%'"></div>
+                </div>
+            </div>
+
+            <!-- STAGE 3: CONSIDERATION / INTERAKSI PRODUK & PAKET -->
+            <div class="funnel-stage-card p-5 space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-300 border border-pink-500/30 flex items-center justify-center font-mono font-bold text-xs">3</div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span>Consideration (Klik Layanan / Paket / Custom)</span>
+                                <span class="px-2 py-0.2 rounded text-[9px] font-mono bg-pink-500/10 text-pink-300 border border-pink-500/20">Stage 3</span>
+                            </h5>
+                            <p class="text-[11px] text-slate-400">Pengguna yang menekan tombol tambah produk, pilih paket bundling, atau brief form.</p>
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="text-lg font-black font-mono text-pink-300" x-text="funnelMetrics.stages.productClicks.count + ' Aksi'"></span>
+                        <span class="text-[10px] font-mono block" :class="funnelMetrics.stages.productClicks.dropoff > 50 ? 'text-rose-400' : 'text-slate-400'"
+                              x-text="'Konversi: ' + funnelMetrics.stages.productClicks.rate + '% (Drop: -' + funnelMetrics.stages.productClicks.dropoff + '%)'"></span>
+                    </div>
+                </div>
+                <div class="funnel-progress-bg">
+                    <div class="funnel-progress-fill bg-gradient-to-r from-purple-500 to-pink-500" :style="'width: ' + funnelMetrics.stages.productClicks.rate + '%'"></div>
+                </div>
+            </div>
+
+            <!-- STAGE 4: DESIRE / MEMBUKA CHECKOUT -->
+            <div class="funnel-stage-card p-5 space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center font-mono font-bold text-xs">4</div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span>Desire (Tahap Form Checkout / Keranjang)</span>
+                                <span class="px-2 py-0.2 rounded text-[9px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/20">Stage 4</span>
+                            </h5>
+                            <p class="text-[11px] text-slate-400">Pengguna yang masuk ke drawer keranjang dan meninjau total harga/diskon.</p>
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="text-lg font-black font-mono text-amber-300" x-text="funnelMetrics.stages.checkoutViews.count + ' User'"></span>
+                        <span class="text-[10px] font-mono block" :class="funnelMetrics.stages.checkoutViews.dropoff > 50 ? 'text-rose-400' : 'text-slate-400'"
+                              x-text="'Konversi: ' + funnelMetrics.stages.checkoutViews.rate + '% (Drop: -' + funnelMetrics.stages.checkoutViews.dropoff + '%)'"></span>
+                    </div>
+                </div>
+                <div class="funnel-progress-bg">
+                    <div class="funnel-progress-fill bg-gradient-to-r from-pink-500 to-amber-500" :style="'width: ' + funnelMetrics.stages.checkoutViews.rate + '%'"></div>
+                </div>
+            </div>
+
+            <!-- STAGE 5: CONVERSION (KLIK PESAN & KIRIM WA ADMIN) -->
+            <div class="funnel-stage-card p-5 space-y-3 border-emerald-500/30 bg-emerald-950/10">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center justify-center font-mono font-bold text-xs shadow-[0_0_12px_rgba(16,185,129,0.3)]">5</div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span>Conversion (Pesan &amp; Kirim ke WhatsApp Admin)</span>
+                                <span class="px-2 py-0.2 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">Goal Success</span>
+                            </h5>
+                            <p class="text-[11px] text-slate-400">Pengguna yang menekan tombol submit pesanan resmi dan terhubung ke WhatsApp Admin.</p>
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="text-xl font-black font-mono text-emerald-400" x-text="funnelMetrics.stages.waConversions.count + ' Deals'"></span>
+                        <span class="text-[10px] font-mono block text-emerald-400 font-bold" 
+                              x-text="'Final Conversion: ' + funnelMetrics.overallConversionRate + '%'"></span>
+                    </div>
+                </div>
+                <div class="funnel-progress-bg">
+                    <div class="funnel-progress-fill bg-gradient-to-r from-amber-500 to-emerald-400" :style="'width: ' + funnelMetrics.stages.waConversions.rate + '%'"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 4. 2 CHARTS GRID: FUNNEL STEP VISUALIZER & BEHAVIOR DISTRIBUTION -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
+        
+        <!-- Chart 1: Bar Chart Drop-off Step -->
+        <div class="lg:col-span-7 apollo-funnel-panel p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Perbandingan Volume Setiap Tahap</h4>
+                        <p class="text-[10px] text-slate-400">Visualisasi jumlah pengguna di setiap tingkatan corong</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 text-[9px] font-mono font-bold">Step Metric</span>
+            </div>
+            <div class="relative h-64 sm:h-72 w-full">
+                <canvas id="chartFunnelSteps"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2: Polar / Doughnut Distribution -->
+        <div class="lg:col-span-5 apollo-funnel-panel p-6 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Rasio Tahapan Interaksi</h4>
+                        <p class="text-[10px] text-slate-400">Porsi keterlibatan audiens di web</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[9px] font-mono font-bold">Distribution</span>
+            </div>
+            <div class="relative h-64 sm:h-72 w-full flex items-center justify-center">
+                <canvas id="chartFunnelDistribution"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 5. 3 ACTIONABLE INSIGHT CARDS (STRATEGIC RECOMMENDATIONS) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6">
+        
+        <div class="funnel-stage-card p-5 space-y-2">
+            <div class="flex items-center gap-2.5 text-rose-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Titik Drop-Off Terbesar</span>
+            </div>
+            <p class="text-xs text-slate-300 font-medium leading-relaxed" x-text="funnelMetrics.insights.biggestDropoffText"></p>
+            <p class="text-[10px] text-slate-500 font-light">Rekomendasi: Tambahkan promo mendesak atau permudah form input.</p>
+        </div>
+
+        <div class="funnel-stage-card p-5 space-y-2">
+            <div class="flex items-center gap-2.5 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-bullseye"></i>
+                <span>Efektivitas CTA WhatsApp</span>
+            </div>
+            <p class="text-xs text-slate-300 font-medium leading-relaxed" x-text="funnelMetrics.insights.ctaEfficiencyText"></p>
+            <p class="text-[10px] text-slate-500 font-light">Rekomendasi: Konsultan WA wajib membalas dalam kurun waktu &lt; 5 menit.</p>
+        </div>
+
+        <div class="funnel-stage-card p-5 space-y-2">
+            <div class="flex items-center gap-2.5 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-handshake"></i>
+                <span>Potensi Repeat Order (LTV)</span>
+            </div>
+            <p class="text-xs text-slate-300 font-medium leading-relaxed" x-text="funnelMetrics.insights.retentionText"></p>
+            <p class="text-[10px] text-slate-500 font-light">Rekomendasi: Tawarkan voucher diskon paket lanjutan ke nomor WA klien lama.</p>
+        </div>
+
+    </div>
+
+</div>
+<!-- ========================================================================= -->
+<!-- TAB: FLASH SALE POP-UP STUDIO ADMIN APOLLO BRAND (ULTRA-PREMIUM REDESIGN) -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Pop-Up Studio Apollo */
+    .popup-studio-panel {
+        background: linear-gradient(155deg, rgba(20, 15, 45, 0.65) 0%, rgba(5, 2, 18, 0.85) 100%);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(236, 72, 153, 0.4); /* Hot Pink Glow */
+        border-left: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.8);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .popup-studio-card {
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 24px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .popup-input-field {
+        background: rgba(3, 0, 20, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #f8fafc;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+    }
+
+    .popup-input-field:focus {
+        outline: none;
+        border-color: #ec4899;
+        background: rgba(3, 0, 20, 0.95);
+        box-shadow: 0 0 20px rgba(236, 72, 153, 0.25), inset 0 0 8px rgba(236, 72, 153, 0.05);
+    }
+
+    /* Ambient Corner Light Mesh */
+    .popup-glow-pink {
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .popup-glow-cyan {
+        position: absolute;
+        bottom: -40px;
+        left: -40px;
+        width: 180px;
+        height: 180px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    /* Action Save Button */
+    .btn-save-popup-glow {
+        background: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #06b6d4 100%);
+        box-shadow: 0 0 30px rgba(236, 72, 153, 0.35);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-save-popup-glow:hover:not(:disabled) {
+        box-shadow: 0 0 45px rgba(236, 72, 153, 0.6);
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    /* Live Preview Simulation Frame */
+    .live-simulation-frame {
+        background: linear-gradient(165deg, rgba(16, 12, 38, 0.95) 0%, rgba(3, 0, 20, 0.98) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(0, 242, 254, 0.5);
+        border-left: 1px solid rgba(168, 85, 247, 0.3);
+        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 242, 254, 0.15);
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sim-timer-box {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+</style>
+
+<div x-show="currentTab === 'popup' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. TOP OVERVIEW & STATUS BANNER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-3xl popup-studio-card border-white/10 bg-white/[0.02]">
+        <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-300 text-[10px] font-bold uppercase tracking-widest">
+                <span class="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse"></span>
+                Conversion Accelerator &amp; FOMO Engine
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Flash Sale Pop-Up Studio</h3>
+            <p class="text-xs text-slate-400 font-light">Konfigurasi pop-up penawaran mendesak dengan hitung mundur (*countdown*) yang muncul otomatis saat klien membuka website.</p>
+        </div>
+
+        <!-- Live Status Capsule -->
+        <div class="flex items-center gap-3">
+            <span class="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-md flex items-center gap-2"
+                  :class="adsForm.popup_status === 'active' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.25)]' : 'bg-rose-500/10 text-rose-400 border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.25)]'">
+                <span class="w-2 h-2 rounded-full" :class="adsForm.popup_status === 'active' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'"></span>
+                <span x-text="adsForm.popup_status === 'active' ? 'STATUS: POP-UP AKTIF' : 'STATUS: NON-AKTIF'"></span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 2. MAIN BENTO GRID: FORM EDITOR (KIRI 7 KOLOM) & LIVE SIMULATOR (KANAN 5 KOLOM) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+        
+        <!-- SISI KIRI: Form Konfigurasi (7 Kolom Desktop) -->
+        <div class="lg:col-span-7 popup-studio-panel p-6 sm:p-8 space-y-6">
+            <div class="popup-glow-pink"></div>
+            <div class="popup-glow-cyan"></div>
+
+            <div class="relative z-10 space-y-5">
+                
+                <!-- Section Title -->
+                <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center text-base shadow-[0_0_15px_rgba(236,72,153,0.3)]">
+                            <i class="fa-solid fa-gift"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] text-pink-400 font-mono font-bold uppercase tracking-wider block">Campaign Parameters</span>
+                            <h4 class="text-base sm:text-lg font-bold text-white leading-tight">Pengaturan Konten Pop-Up</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Grid 2 Kolom: Status & Durasi Jam -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 text-xs">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">
+                            Status Tampilan <span class="text-pink-400">*</span>
+                        </label>
+                        <select x-model="adsForm.popup_status" 
+                                class="w-full popup-input-field px-4 py-3 text-xs text-white appearance-none cursor-pointer">
+                            <option value="active" class="bg-slate-950 text-emerald-400">Aktif (Tampilkan Otomatis ke User)</option>
+                            <option value="inactive" class="bg-slate-950 text-rose-400">Non-Aktif (Sembunyikan dari Website)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">
+                            Durasi Timer (Jam) <span class="text-pink-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs">
+                                <i class="fa-solid fa-clock"></i>
+                            </span>
+                            <input type="number" x-model="adsForm.popup_timer" placeholder="Contoh: 2" 
+                                   class="w-full popup-input-field pl-10 pr-4 py-3 text-xs text-white font-mono">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input: Judul Pop-Up -->
+                <div class="text-xs">
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">
+                        Judul Utama Pop-Up <span class="text-pink-400">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs">
+                            <i class="fa-solid fa-heading"></i>
+                        </span>
+                        <input type="text" x-model="adsForm.popup_title" placeholder="Contoh: Flash Sale Spesial" 
+                               class="w-full popup-input-field pl-10 pr-4 py-3 text-xs text-white">
+                    </div>
+                </div>
+
+                <!-- Input: Teks Kupon / Diskon -->
+                <div class="text-xs">
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">
+                        Teks Voucher / Nilai Promo <span class="text-pink-400">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs">
+                            <i class="fa-solid fa-ticket"></i>
+                        </span>
+                        <input type="text" x-model="adsForm.popup_discount" placeholder="Contoh: APOLLOCOMBO (Diskon 35%)" 
+                               class="w-full popup-input-field pl-10 pr-4 py-3 text-xs text-white font-mono">
+                    </div>
+                </div>
+
+                <!-- Input: URL Gambar Banner -->
+                <div class="text-xs">
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">
+                        URL Gambar Banner Pop-Up (Unsplash / Cloud Storage)
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-xs">
+                            <i class="fa-solid fa-image"></i>
+                        </span>
+                        <input type="text" x-model="adsForm.popup_image" 
+                               placeholder="https://images.unsplash.com/photo-..." 
+                               class="w-full popup-input-field pl-10 pr-4 py-3 text-xs text-white font-mono placeholder:text-slate-600">
+                    </div>
+                </div>
+
+                <!-- Textarea: Deskripsi Promosi -->
+                <div class="text-xs">
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">
+                        Deskripsi Penjelasan Promo
+                    </label>
+                    <textarea x-model="adsForm.popup_desc" rows="3" 
+                              placeholder="Tuliskan ajakan singkat, syarat promo, atau urgensi diskon..." 
+                              class="w-full popup-input-field px-4 py-3 text-xs text-white resize-none leading-relaxed placeholder:text-slate-600"></textarea>
+                </div>
+
+                <!-- Submit Action Button -->
+                <div class="pt-4 border-t border-white/10">
+                    <button type="button" 
+                            @click="saveAdsSettings()" 
+                            :disabled="isSavingAds" 
+                            class="w-full sm:w-auto px-8 py-3.5 btn-save-popup-glow text-slate-950 font-bold rounded-2xl text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-2.5">
+                        <template x-if="isSavingAds">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-spinner fa-spin text-sm"></i>
+                                <span>Menyimpan ke Database...</span>
+                            </span>
+                        </template>
+                        <template x-if="!isSavingAds">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                                <span>Simpan Pengaturan Pop-Up</span>
+                            </span>
+                        </template>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SISI KANAN: Live Interactive Client Viewport Simulator (5 Kolom Desktop) -->
+        <div class="lg:col-span-5 space-y-4">
+            
+            <div class="flex items-center justify-between px-1">
+                <span class="text-[10px] uppercase tracking-widest text-cyan-400 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye text-xs"></i>
+                    <span>Live Client Viewport Simulation</span>
+                </span>
+                <span class="text-[9px] font-mono text-slate-500">Auto-Refreshed</span>
+            </div>
+
+            <!-- Frame Pratinjau Interaktif Pop-Up -->
+            <div class="live-simulation-frame p-5 sm:p-6 space-y-4">
+                
+                <!-- Close Button Simulator -->
+                <div class="flex justify-between items-center pb-2 border-b border-white/5">
+                    <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 text-[8px] font-bold uppercase tracking-wider">
+                        Pratinjau Pop-Up
+                    </span>
+                    <span class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-slate-400 text-[10px]">
+                        <i class="fa-solid fa-xmark"></i>
+                    </span>
+                </div>
+
+                <!-- Image Banner Simulator -->
+                <div class="w-full h-32 rounded-xl overflow-hidden relative bg-[#030014] border border-white/10">
+                    <img :src="adsForm.popup_image || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop'" 
+                         alt="Banner Preview" 
+                         class="w-full h-full object-cover opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#030014] via-transparent to-transparent"></div>
+                    <div class="absolute bottom-2.5 left-2.5">
+                        <span class="px-2 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/20 text-[8px] font-bold text-white uppercase tracking-widest flex items-center gap-1">
+                            <span class="w-1 h-1 rounded-full bg-cyan-400 animate-pulse"></span>
+                            Exclusive Offer
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Title & Description Simulator -->
+                <div class="space-y-1">
+                    <h4 class="text-base sm:text-lg font-black text-white leading-snug truncate" 
+                        x-text="adsForm.popup_title || 'Flash Sale Spesial'"></h4>
+                    <p class="text-[11px] text-slate-300 font-light line-clamp-2 leading-relaxed" 
+                       x-text="adsForm.popup_desc || 'Klaim penawaran eksklusif ini sebelum waktu habis.'"></p>
+                </div>
+
+                <!-- Voucher Box Simulator -->
+                <div class="p-2.5 rounded-xl bg-white/[0.03] border border-cyan-500/30 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-ticket"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="text-[8px] uppercase tracking-widest text-slate-500 font-bold block">Kode Promo</span>
+                            <span class="text-xs font-black font-mono text-cyan-300 truncate block" 
+                                  x-text="adsForm.popup_discount || 'APOLLOCOMBO'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Countdown Timer Simulator -->
+                <div class="pt-1">
+                    <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block mb-1.5 text-center">Berakhir Dalam:</span>
+                    <div class="flex items-center justify-center gap-2 font-mono">
+                        <div class="sim-timer-box px-2.5 py-1 text-center">
+                            <span class="text-xs font-bold text-white block" x-text="String(adsForm.popup_timer || '2').padStart(2, '0')"></span>
+                            <span class="text-[7px] text-slate-500 uppercase">Jam</span>
+                        </div>
+                        <span class="text-slate-600 font-bold text-xs">:</span>
+                        <div class="sim-timer-box px-2.5 py-1 text-center">
+                            <span class="text-xs font-bold text-white block">00</span>
+                            <span class="text-[7px] text-slate-500 uppercase">Mnt</span>
+                        </div>
+                        <span class="text-slate-600 font-bold text-xs">:</span>
+                        <div class="sim-timer-box px-2.5 py-1 text-center">
+                            <span class="text-xs font-bold text-cyan-400 block">00</span>
+                            <span class="text-[7px] text-cyan-500/70 uppercase">Dtk</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA Button Simulator -->
+                <div class="pt-1">
+                    <div class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-slate-950 font-black text-[10px] uppercase tracking-wider text-center flex items-center justify-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
+                        <span>Klaim Diskon Sekarang</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 3. STRATEGIC TIPS & BEST PRACTICES (BOTTOM TRIO) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        
+        <div class="popup-studio-card p-5 space-y-2">
+            <div class="flex items-center gap-2 text-pink-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-hourglass-start text-sm"></i>
+                <span>Optimalisasi Urgensi (FOMO)</span>
+            </div>
+            <p class="text-xs text-slate-300 font-light leading-relaxed">
+                Durasi terbaik untuk memicu keputusan pembelian instan adalah antara <strong>1 hingga 3 Jam</strong>.
+            </p>
+        </div>
+
+        <div class="popup-studio-card p-5 space-y-2">
+            <div class="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-cart-shopping text-sm"></i>
+                <span>Auto-Cart Integration</span>
+            </div>
+            <p class="text-xs text-slate-300 font-light leading-relaxed">
+                Saat klien menekan tombol klaim, kode promo otomatis terisi di kolom checkout dan keranjang langsung terbuka.
+            </p>
+        </div>
+
+        <div class="popup-studio-card p-5 space-y-2">
+            <div class="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-bolt text-sm"></i>
+                <span>Instant Cloud Invalidation</span>
+            </div>
+            <p class="text-xs text-slate-300 font-light leading-relaxed">
+                Setiap kali Anda menekan tombol simpan, sistem otomatis menghapus cache sehingga perubahan tampil seketika di website klien.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- END TAB 6: INVENTORY & BARCODE ADMIN APOLLO BRAND -->
 
         </div>
@@ -3013,12 +5074,51 @@
     </div>
 
 </div>
+<!-- ========================================================================= -->
+    <!-- FLOATING LIVE TOAST NOTIFIKASI PESANAN BARU MASUK (AUTO-ALERT) -->
+    <!-- ========================================================================= -->
+    <div x-show="showNewOrderToast"
+         x-transition:enter="transform transition ease-out duration-400"
+         x-transition:enter-start="opacity-0 translate-y-6 scale-90"
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+         x-transition:leave="transform transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 translate-y-4 scale-90"
+         class="fixed top-20 right-6 z-[9999] p-4 sm:p-5 rounded-2xl bg-[#0a0620]/95 backdrop-blur-2xl border border-cyan-400/40 shadow-[0_15px_50px_rgba(0,242,254,0.35)] max-w-sm w-full flex items-start gap-3.5 pointer-events-auto"
+         style="display: none;">
+        
+        <!-- Glowing Alert Icon -->
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 flex items-center justify-center text-slate-950 font-bold text-base shadow-[0_0_20px_rgba(0,242,254,0.5)] shrink-0">
+            <i class="fa-solid fa-bell animate-bounce"></i>
+        </div>
+
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+                <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-cyan-400 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                    Pesanan Baru Masuk!
+                </span>
+                <button type="button" @click="showNewOrderToast = false" class="text-slate-400 hover:text-white text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <h5 class="text-xs sm:text-sm font-bold text-white truncate mt-1" x-text="newOrderToastData.name"></h5>
+            
+            <div class="flex items-center justify-between mt-1 text-[11px] font-mono">
+                <span class="text-cyan-300" x-text="newOrderToastData.id"></span>
+                <span class="text-emerald-400 font-bold" x-text="newOrderToastData.total === 0 ? 'Menunggu Estimasi' : formatRupiah(newOrderToastData.total)"></span>
+            </div>
+        </div>
+    </div>
+    <!-- ========================================================================= -->
+
 <!-- END MODAL SCANNER KAMERA APOLLO BRAND -->
 
     <!-- SYSTEM LOGIC -->
     <script>
         // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQFzckdh5j5-10R0_ZXGP0crrtTGdt6bVx9tw-WxLidA1cV64L_1GlihnHjbqV_X6lYA/exec"; 
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtgsLC2yxmzN-MDIPz6xZKVD7pZLtcgzLotQ69Y7-3b5_RZlNfGKuGShXJk1Hy5t04FQ/exec"; 
 
         // Variable global untuk instance Chart.js agar bisa di-destroy (dihapus) sebelum digambar ulang
       // =========================================================================
@@ -3038,6 +5138,27 @@ function adminApp() {
         isLoadingData: true,
         isRefreshing: false,
         mobileSidebarOpen: false,
+        // --- CONTROL COIN STATES ---
+        coinUsers: [],
+        coinLogs: [],
+        coinSearch: '',
+        coinModalOpen: false,
+        isMutatingCoins: false,
+        coinMutationForm: {
+            idUser: '',
+            userName: '',
+            userEmail: '',
+            currentCoins: 0,
+            type: 'CREDIT', // 'CREDIT' atau 'DEBIT'
+            amount: 10,
+            description: ''
+        },
+        // --- LIVE AUTO-SYNC & NOTIFICATION STATES ---
+        autoSyncInterval: null,
+        isAutoSyncing: false,
+        lastKnownOrderId: '',
+        showNewOrderToast: false,
+        newOrderToastData: { id: '', name: '', total: 0 },
 
         // --- INVENTORY & BARCODE SCANNER STATES ---
         inventorySearch: '',
@@ -3072,7 +5193,15 @@ function adminApp() {
             deskripsi: '',
             gambar: ''
         },
-
+         // --- INVOICE & NOTA STATES ---
+        selectedInvoice: null,
+        invoiceSearch: '',
+        isExportingDoc: false,
+// --- HISTORY & AUDIT LOG STATES ---
+        historySearch: '',
+        historyStatusFilter: 'Semua',
+        historyModalOpen: false,
+        selectedHistoryItem: null,
         // --- PRODUCT & SERVICE CRUD MODAL STATES ---
         productModal: false,
         productFormMode: 'add', // 'add' atau 'edit'
@@ -3087,6 +5216,27 @@ function adminApp() {
             deskripsi: '',
             gambar: ''
         },
+        // --- CUSTOMER ANALYSIS & FUNNEL STATES ---
+        funnelTimeFilter: 'all', // 'today', '7days', '30days', 'all'
+        funnelRawEvents: [],
+        funnelMetrics: {
+            overallConversionRate: 0,
+            cartToWaRate: 0,
+            retentionRate: 0,
+            averageOrderValue: 0,
+            stages: {
+                visitors: { count: 0, rate: 100, dropoff: 0 },
+                scrollers: { count: 0, rate: 0, dropoff: 0 },
+                productClicks: { count: 0, rate: 0, dropoff: 0 },
+                checkoutViews: { count: 0, rate: 0, dropoff: 0 },
+                waConversions: { count: 0, rate: 0, dropoff: 0 }
+            },
+            insights: {
+                biggestDropoffText: 'Memuat data analisis...',
+                ctaEfficiencyText: 'Memuat data efisiensi...',
+                retentionText: 'Memuat data retensi...'
+            }
+        },
 
         // --- ANNOUNCEMENT (BANNER ADS) STATES ---
         adsForm: { 
@@ -3100,12 +5250,69 @@ function adminApp() {
         // --- FILTER & SEARCH STATES ---
         searchQuery: '',
         statusFilter: 'Semua',
+// --- SECURITY STATES ---
+        isAdminAuthenticated: false,
+        adminPasscode: '',
+        isValidatingAdmin: false,
+        
+        // HASH DARI PASSWORD ADMIN (Contoh: Hash dari kata "ApolloAdmin2026!")
+        // Jangan simpan password plain text di frontend. Gunakan hash SHA256.
+        // Anda bisa men-generate hash di web (contoh: SHA256("ApolloAdmin2026!"))
+        // Nilai di bawah adalah hash untuk "ApolloAdmin2026!"
+        AUTHORIZED_HASH: 'd30fbf099aebf80acea2d36004959f80ab00e5b73faf52681b6528a860b2d904',
 
+        initAdminSecurity() {
+            // Cek Session Token Terenkripsi di LocalStorage
+            const sessionToken = sessionStorage.getItem('apollo_admin_token');
+            if (sessionToken === this.AUTHORIZED_HASH) {
+                this.isAdminAuthenticated = true;
+                this.initApp(); // Jalankan fungsi load data admin
+            }
+        },
+
+async verifyAdminAccess() {
+            this.isValidatingAdmin = true;
+            
+            // Jeda buatan (anti brute-force UI)
+            await new Promise(r => setTimeout(r, 800)); 
+
+            try {
+                // Hashing input secara lokal
+                const inputHash = CryptoJS.SHA256(this.adminPasscode).toString();
+                
+                // CEK COCOK ATAU TIDAK
+                if (inputHash === this.AUTHORIZED_HASH) {
+                    this.isAdminAuthenticated = true;
+                    sessionStorage.setItem('apollo_admin_token', this.AUTHORIZED_HASH);
+                    this.adminPasscode = '';
+                    this.initApp(); // Load dashboard data
+                } else {
+                    // Beri tahu di console jika hash tidak cocok
+                    console.error("HASH MISMATCH!");
+                    console.error("Hash dari input Anda :", inputHash);
+                    console.error("Hash di sistem (AUTHORIZED_HASH) :", this.AUTHORIZED_HASH);
+                    
+                    alert("ACCESS DENIED: Password salah! Cek Inspect Element (Console) untuk melihat perbedaan Hash.");
+                    this.adminPasscode = '';
+                }
+            } catch (err) {
+                console.error("CryptoJS Error:", err);
+                alert("Sistem Keamanan Gagal Dimuat. Pastikan Script CryptoJS sudah ada di <head>.");
+            }
+            
+            this.isValidatingAdmin = false;
+        },
+        logoutAdmin() {
+            sessionStorage.removeItem('apollo_admin_token');
+            this.isAdminAuthenticated = false;
+            window.location.reload();
+        },
         // =================================================================
         // 1. INITIALIZATION & DATA FETCHING
         // =================================================================
         initApp() {
             this.loadAllData();
+            this.initAutoSyncEngine();
             
             // Auto-refresh data pesanan setiap 60 detik jika sedang di tab 'orders'
             setInterval(() => {
@@ -3115,47 +5322,698 @@ function adminApp() {
             }, 60000);
         },
 
+// GANTI fungsi loadAllData() lama dengan versi INSTANT LOAD ini:
         async loadAllData() {
-            this.isLoadingData = true;
+            // 1. INSTANT RENDER DARI LOCAL STORAGE (0 Detik)
+            const cachedAdmin = localStorage.getItem('apollo_admin_bootstrap_cache');
+            if (cachedAdmin) {
+                try {
+                    const parsed = JSON.parse(cachedAdmin);
+                    this.analyticsData = parsed.analytics || this.analyticsData;
+                    this.orders = parsed.orders || [];
+                    this.adminProducts = parsed.products || [];
+                    this.adminPackages = parsed.packages || [];
+                    this.adsForm = parsed.settings || this.adsForm;
+                    this.isLoadingData = false;
+
+                    if (this.currentTab === 'dashboard') {
+                        this.$nextTick(() => { this.renderCharts(); });
+                    }
+                } catch (e) {}
+            } else {
+                this.isLoadingData = true;
+            }
+
+            // 2. SATU REQUEST TUNGGAL UNTUK SEMUA DATA
             try {
-                await Promise.all([
-                    this.fetchAnalytics(),
-                    this.fetchOrders(true),
-                    this.fetchAdminProducts(),
-                    this.fetchAdsAdmin(),
-                     this.fetchAdminPackages() 
-                ]);
+                const res = await fetch(`${SCRIPT_URL}?action=get_admin_bootstrap`);
+                const json = await res.json();
+
+                if (json.status === 'success' && json.data) {
+                    const d = json.data;
+                    this.analyticsData = d.analytics || this.analyticsData;
+                    this.orders = d.orders || [];
+                    this.adminProducts = d.products || [];
+                    this.adminPackages = d.packages || [];
+                    this.adsForm = d.settings || this.adsForm;
+
+                    // Simpan cache lokal admin
+                    localStorage.setItem('apollo_admin_bootstrap_cache', JSON.stringify(d));
+
+                    if (this.currentTab === 'dashboard') {
+                        this.$nextTick(() => { this.renderCharts(); });
+                    }
+                }
             } catch (e) {
-                console.error("Gagal sinkronisasi data admin Apollo:", e);
+                console.error("Gagal fetch data admin:", e);
             } finally {
                 this.isLoadingData = false;
             }
-
-            // Render Chart.js jika tab awal adalah dashboard
-            if (this.currentTab === 'dashboard') {
-                this.$nextTick(() => { this.renderCharts(); });
-            }
         },
-
         async refreshData() {
             this.isRefreshing = true;
             await this.loadAllData();
             this.isRefreshing = false;
         },
-
         // =================================================================
-        // 2. TAB ROUTING & PAGE TITLES
+        // LIVE REAL-TIME AUTO-SYNC & AUDIO NOTIFICATION ENGINE
         // =================================================================
-        switchTab(tab) {
-            this.currentTab = tab;
-            this.mobileSidebarOpen = false;
 
-            // Render ulang grafik dengan transisi halus saat masuk ke dashboard
-            if (tab === 'dashboard') {
-                this.$nextTick(() => { this.renderCharts(); });
+        // 1. Inisialisasi Detektor Pesanan Otomatis
+        // =================================================================
+        // ENGINE AUTO-SYNC REAL-TIME (TURBO CACHE-BUSTER - 5 DETIK)
+        // =================================================================
+
+        // 1. Inisialisasi Engine Auto-Sync
+        initAutoSyncEngine() {
+            // Catat ID transaksi teratas saat ini sebagai patokan awal
+            if (this.orders && this.orders.length > 0) {
+                this.lastKnownOrderId = this.orders[0].idTransaksi;
+            }
+
+            // Hentikan interval lama jika ada
+            if (this.autoSyncInterval) clearInterval(this.autoSyncInterval);
+
+            // Jeda dipersingkat menjadi 5 Detik (5000ms) agar terasa instan & real-time!
+            this.autoSyncInterval = setInterval(() => {
+                this.checkIncomingDataAuto();
+            }, 5000);
+
+            // Langsung sinkronkan saat admin membuka kembali tab browser
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' && this.isAdminAuthenticated) {
+                    this.checkIncomingDataAuto();
+                }
+            });
+        },
+
+        // 2. Mesin Pengecek Pesanan Baru ke Google Sheets (Anti-Cache)
+        async checkIncomingDataAuto() {
+            // Hindari tabrakan request jika sedang mengambil data
+            if (this.isAutoSyncing || !this.isAdminAuthenticated) return;
+            this.isAutoSyncing = true;
+
+            try {
+                // 👇 KUNCI RAHASIA: Tambahkan &_t=${Date.now()} dan cache: 'no-store' 
+                // agar browser DIPAKSA mengambil data paling baru langsung dari Google Sheets!
+                const res = await fetch(`${SCRIPT_URL}?action=get_orders&_t=${Date.now()}`, {
+                    method: 'GET',
+                    cache: 'no-store',
+                    headers: {
+                        'Pragma': 'no-cache',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+
+                const json = await res.json();
+
+                if (json.status === 'success' && Array.isArray(json.orders)) {
+                    const latestOrders = json.orders;
+
+                    if (latestOrders.length > 0) {
+                        const topOrder = latestOrders[0];
+
+                        // DETEKSI PESANAN BARU:
+                        // Jika ada pesanan baru yang ID-nya berbeda dari data sebelumnya
+                        if (this.lastKnownOrderId && topOrder.idTransaksi !== this.lastKnownOrderId) {
+                            
+                            // A. Munculkan Toast Notifikasi di Layar
+                            this.newOrderToastData = {
+                                id: topOrder.idTransaksi,
+                                name: topOrder.customerName || 'Klien Baru',
+                                total: Number(topOrder.total) || 0
+                            };
+                            this.showNewOrderToast = true;
+                            
+                            setTimeout(() => {
+                                this.showNewOrderToast = false;
+                            }, 7000);
+
+                            // B. Bunyikan Lonceng Notifikasi (Diproteksi agar tidak crash)
+                            try {
+                                this.playChimeSound();
+                            } catch (audioErr) {}
+
+                            // C. Update Analitik & Grafik secara otomatis
+                            this.fetchAnalytics();
+                        }
+
+                        // 👇 PERBARUI ARRAY REAKTIF: Membuat Alpine langsung me-render kartu pesanan baru!
+                        this.orders = [...latestOrders];
+                        this.lastKnownOrderId = topOrder.idTransaksi;
+                    }
+                }
+            } catch (err) {
+                // Silent fail agar console tetap bersih
+            } finally {
+                this.isAutoSyncing = false;
+            }
+        },
+        // 3. Audio Chime Synthesizer (Tanpa File Eksternal - 100% Anti Error 404)
+        playChimeSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                // Nada 1: Crystal Chime (523.25 Hz - C5)
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, now);
+                gain1.gain.setValueAtTime(0.15, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.6);
+
+                // Nada 2: High Bell (659.25 Hz - E5)
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(659.25, now + 0.12);
+                gain2.gain.setValueAtTime(0.2, now + 0.12);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.12);
+                osc2.stop(now + 0.8);
+
+            } catch (e) {
+                console.log("Audio Policy: Butuh 1x klik pada halaman sebelum audio aktif.");
+            }
+        },
+// =================================================================
+        // NOTA PEMBAYARAN & INVOICE GENERATOR ENGINE (PDF & PNG EXPORT)
+        // =================================================================
+        get filteredInvoiceOrders() {
+            let list = this.orders || [];
+            if (this.invoiceSearch.trim() !== '') {
+                const q = this.invoiceSearch.toLowerCase().trim();
+                list = list.filter(o => 
+                    String(o.idTransaksi || '').toLowerCase().includes(q) ||
+                    String(o.customerName || '').toLowerCase().includes(q) ||
+                    String(o.customerPhone || '').toLowerCase().includes(q)
+                );
+            }
+            return list;
+        },
+
+        selectInvoiceOrder(order) {
+            this.selectedInvoice = order;
+        },
+
+       // =================================================================
+        // MESIN RENDER NOTA RESMI APOLLO (FIX DATA TABEL & ANTI-SQUISH)
+        // =================================================================
+
+        // Helper Cerdas: Memisahkan Item, Brief, dan Metadata secara presisi
+        getInvoiceStructuredData(invoice) {
+            if (!invoice || !invoice.itemsList) {
+                return {
+                    items: [{ no: 1, title: 'Layanan Apollo Brand', desc: '', price: 0 }],
+                    subtotal: 0, discount: 0, total: 0, clientNotes: '', deadline: '', alamat: ''
+                };
+            }
+
+            const rawText = String(invoice.itemsList);
+            const lines = rawText.split('\n');
+            
+            let items = [];
+            let currentItem = null;
+            let clientNotes = '';
+            let deadline = '';
+            let alamat = '';
+
+            // 1. Kasus Proyek Custom (APL-CST-)
+            if (invoice.idTransaksi && invoice.idTransaksi.includes('APL-CST-')) {
+                let category = 'Proyek Khusus / Custom Service';
+                let brief = '';
+                
+                lines.forEach(line => {
+                    const t = line.trim();
+                    if (t.startsWith('PROYEK KHUSUS:')) {
+                        category = t.replace('PROYEK KHUSUS:', '').trim();
+                    } else if (t.startsWith('Deadline Klien:')) {
+                        deadline = t.replace('Deadline Klien:', '').trim();
+                    } else if (t.startsWith('Deskripsi Brief:')) {
+                        brief += t.replace('Deskripsi Brief:', '').trim() + ' ';
+                    } else if (t.length > 0 && !t.includes('Alamat') && !t.includes('Catatan')) {
+                        brief += t + ' ';
+                    }
+                });
+
+                items.push({
+                    no: 1,
+                    title: category,
+                    desc: brief.trim() ? 'Brief: ' + brief.trim() : '',
+                    price: Number(invoice.total) || 0
+                });
+
+                const subtotal = Number(invoice.subtotal) || Number(invoice.total) || 0;
+                const total = Number(invoice.total) || 0;
+
+                return {
+                    items: items,
+                    subtotal: subtotal,
+                    discount: (subtotal > total) ? (subtotal - total) : 0,
+                    total: total,
+                    clientNotes: clientNotes,
+                    deadline: deadline || invoice.deliveryTime || '',
+                    alamat: invoice.alamat || ''
+                };
+            }
+
+            // 2. Kasus Pesanan Reguler (Katalog / Package)
+            let itemIndex = 1;
+            lines.forEach(line => {
+                const t = line.trim();
+                if (!t) return;
+
+                if (t.includes('📍 Alamat:') || t.includes('🏛️ Alamat / Kampus:') || t.includes('🏛️ Alamat:')) {
+                    alamat = t.replace(/.*?📍 Alamat:\s*|.*?🏛️ Alamat \/ Kampus:\s*|.*?🏛️ Alamat:\s*/, '').trim();
+                } else if (t.includes('⏰ Waktu:') || t.includes('⏰ Target Deadline:') || t.includes('⏰ Waktu Pengiriman:')) {
+                    deadline = t.replace(/.*?⏰ (Target Deadline|Waktu Pengiriman|Waktu):\s*/, '').trim();
+                } else if (t.includes('📝 Catatan:') || t.includes('📝 Catatan Khusus:')) {
+                    clientNotes = t.replace(/.*?📝 (Catatan Khusus|Catatan):\s*/, '').trim();
+                } else if (t.includes('🏷️ Diskon:') || t.includes('🏷️ Voucher Diskon:')) {
+                    // Tag diskon
+                } else if (t.startsWith('Brief:')) {
+                    // Masukkan brief sebagai deskripsi di bawah nama item (bukan baris baru!)
+                    if (currentItem) {
+                        currentItem.desc = t;
+                    } else {
+                        clientNotes += (clientNotes ? ' ' : '') + t;
+                    }
+                } else {
+                    let cleanTitle = t.replace(/^\d+\.\s*/, '');
+                    let itemPrice = Number(invoice.total) || 0;
+                    
+                    // Ekstrak harga satuan jika tertera di baris teks
+                    const priceMatch = cleanTitle.match(/-\s*Rp\s*([\d\.\,]+)/i);
+                    if (priceMatch) {
+                        itemPrice = Number(priceMatch[1].replace(/\D/g, '')) || itemPrice;
+                        cleanTitle = cleanTitle.replace(/-\s*Rp\s*[\d\.\,]+/i, '').trim();
+                    }
+
+                    currentItem = {
+                        no: itemIndex++,
+                        title: cleanTitle,
+                        desc: '',
+                        price: itemPrice
+                    };
+                    items.push(currentItem);
+                }
+            });
+
+            if (items.length === 0) {
+                items.push({
+                    no: 1,
+                    title: 'Layanan Apollo Brand',
+                    desc: '',
+                    price: Number(invoice.total) || 0
+                });
+            }
+
+            const subtotal = Number(invoice.subtotal) || Number(invoice.total) || 0;
+            const total = Number(invoice.total) || 0;
+
+            return {
+                items: items,
+                subtotal: subtotal,
+                discount: (subtotal > total) ? (subtotal - total) : 0,
+                total: total,
+                clientNotes: clientNotes,
+                deadline: deadline || invoice.deliveryTime || '',
+                alamat: alamat || invoice.alamat || ''
+            };
+        },
+
+        // Export PDF Presisi Tinggi
+       // =================================================================
+        // EXPORT NOTA PRESISI HD (PDF & PNG RESMI)
+        // =================================================================
+        async downloadInvoicePDF() {
+            if (!this.selectedInvoice) return;
+            const element = document.getElementById('apollo-invoice-paper');
+            if (!element) return;
+
+            this.isExportingDoc = true;
+
+            try {
+                // Tunggu font browser siap sepenuhnya
+                if (document.fonts) await document.fonts.ready;
+
+                // Render Canvas dengan skala HD 2.0 dan ukuran A4
+                const canvas = await html2canvas(element, {
+                    scale: 2.0,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff',
+                    windowWidth: 794,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                const { jsPDF } = window.jspdf;
+                
+                // Format A4 Portrait (210mm x 297mm)
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+                pdf.save(`Nota_Resmi_Apollo_${this.selectedInvoice.idTransaksi}.pdf`);
+
+            } catch (err) {
+                console.error("Gagal export PDF:", err);
+                alert("Terjadi kendala saat merender dokumen PDF.");
+            } finally {
+                this.isExportingDoc = false;
+            }
+        },
+        // =================================================================
+        // CONTROL COIN & REWARD ADMIN CONTROLLER
+        // =================================================================
+        async fetchCoinAdminData() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get_coin_admin_data`);
+                const json = await res.json();
+                if (json.status === 'success' && json.data) {
+                    this.coinUsers = json.data.users || [];
+                    this.coinLogs = json.data.logs || [];
+                }
+            } catch (err) {
+                console.error("Gagal memuat data koin admin:", err);
             }
         },
 
+        get filteredCoinUsers() {
+            let list = this.coinUsers || [];
+            if (this.coinSearch.trim() !== '') {
+                const q = this.coinSearch.toLowerCase().trim();
+                list = list.filter(u => 
+                    String(u.namaLengkap || '').toLowerCase().includes(q) ||
+                    String(u.email || '').toLowerCase().includes(q) ||
+                    String(u.idUser || '').toLowerCase().includes(q) ||
+                    String(u.noWa || '').toLowerCase().includes(q)
+                );
+            }
+            return list;
+        },
+
+        get totalCirculatingCoins() {
+            return (this.coinUsers || []).reduce((sum, u) => sum + (Number(u.coins) || 0), 0);
+        },
+
+        get totalCoinsValuation() {
+            return this.totalCirculatingCoins * 1000;
+        },
+
+        get clientsWithCoinsCount() {
+            return (this.coinUsers || []).filter(u => Number(u.coins) > 0).length;
+        },
+
+        openCoinMutationModal(user, type = 'CREDIT') {
+            this.coinMutationForm = {
+                idUser: user.idUser,
+                userName: user.namaLengkap,
+                userEmail: user.email,
+                currentCoins: Number(user.coins) || 0,
+                type: type,
+                amount: 10,
+                description: type === 'CREDIT' ? 'Kompensasi Keluhan / Reward Klien' : 'Penyesuaian Saldo'
+            };
+            this.coinModalOpen = true;
+        },
+
+        async submitCoinMutation() {
+            if (!this.coinMutationForm.idUser || !this.coinMutationForm.amount || !this.coinMutationForm.description) {
+                alert("Lengkapi seluruh kolom formulir mutasi koin!");
+                return;
+            }
+
+            this.isMutatingCoins = true;
+
+            const payload = new URLSearchParams({
+                action: 'adjust_user_coins',
+                idUser: this.coinMutationForm.idUser,
+                amount: String(this.coinMutationForm.amount),
+                type: this.coinMutationForm.type,
+                description: this.coinMutationForm.description
+            });
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: payload });
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    alert(`✅ Berhasil! Saldo koin ${this.coinMutationForm.userName} telah diperbarui.`);
+                    this.coinModalOpen = false;
+                    await this.fetchCoinAdminData(); // Refresh UI langsung
+                } else {
+                    alert("❌ Gagal: " + json.message);
+                }
+            } catch (e) {
+                alert("Gagal menghubungi server database.");
+            } finally {
+                this.isMutatingCoins = false;
+            }
+        },
+
+        async downloadInvoicePNG() {
+            if (!this.selectedInvoice) return;
+            const element = document.getElementById('apollo-invoice-paper');
+            if (!element) return;
+
+            this.isExportingDoc = true;
+
+            try {
+                if (document.fonts) await document.fonts.ready;
+
+                // Render Canvas PNG Ultra-Crisp (Skala 2.5)
+                const canvas = await html2canvas(element, {
+                    scale: 2.5,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff',
+                    windowWidth: 794,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+
+                const link = document.createElement('a');
+                link.download = `Nota_Resmi_Apollo_${this.selectedInvoice.idTransaksi}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+
+            } catch (err) {
+                console.error("Gagal export PNG:", err);
+                alert("Terjadi kendala saat merender gambar PNG.");
+            } finally {
+                this.isExportingDoc = false;
+            }
+        },
+        // 3. CETAK LANGSUNG (PRINT WINDOW)
+        printInvoiceDirect() {
+            if (!this.selectedInvoice) return;
+            window.print();
+        },
+        // =================================================================
+        // 2. TAB ROUTING & PAGE TITLES
+        // =================================================================
+       switchTab(tab) {
+            this.currentTab = tab;
+            this.mobileSidebarOpen = false;
+
+            if (tab === 'dashboard') {
+                this.$nextTick(() => { this.renderCharts(); });
+            }
+             // Inisialisasi Tab Control Coin
+            if (tab === 'coins') {
+                this.fetchCoinAdminData();
+            }
+            
+            // Auto-select transaksi pertama jika membuka tab nota
+            if (tab === 'invoices' && !this.selectedInvoice && this.orders && this.orders.length > 0) {
+                this.selectedInvoice = this.orders[0];
+            }
+             if (tab === 'customer_analysis') {
+                this.$nextTick(() => {
+                    this.fetchCustomerAnalysis();
+                });
+            }
+        },
+        // =================================================================
+        // CUSTOMER ANALYSIS & MARKETING FUNNEL CONTROLLER
+        // =================================================================
+     // =================================================================
+        // CUSTOMER ANALYSIS & MARKETING FUNNEL CONTROLLER
+        // =================================================================
+        async fetchCustomerAnalysis() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get_customer_analysis&timeframe=${this.funnelTimeFilter}`);
+                const json = await res.json();
+                
+                if (json.status === 'success' && json.data) {
+                    this.calculateFunnelMetrics(json.data);
+                    this.$nextTick(() => {
+                        this.renderFunnelCharts();
+                    });
+                }
+            } catch (err) {
+                console.error("Gagal memuat Customer Analysis:", err);
+            }
+        },
+
+        changeFunnelFilter(filter) {
+            this.funnelTimeFilter = filter;
+            this.fetchCustomerAnalysis();
+        },
+
+   // =================================================================
+// CUSTOMER ANALYSIS & MARKETING FUNNEL CONTROLLER (ADMIN)
+// =================================================================
+calculateFunnelMetrics(data) {
+    const counts = data.counts || { visit: 0, scroll: 0, product_click: 0, checkout_open: 0, wa_submit: 0 };
+    const orders = this.orders || [];
+
+    // Pengunjung dihitung berdasarkan jumlah sesi visit atau akumulasi interaksi tertinggi
+    const v = Math.max(counts.visit || 0, counts.scroll || 0, counts.product_click || 0, counts.checkout_open || 0, counts.wa_submit || 0);
+    const s = counts.scroll || 0;
+    const p = counts.product_click || 0;
+    const c = counts.checkout_open || 0;
+    const w = counts.wa_submit || 0; // HANYA hitung submission WA aktual pada periode ini!
+
+    const baseV = Math.max(v, 1);
+
+    // Rate per Step terhadap Total Visitors
+    const sRate = v > 0 ? Math.min(100, Math.round((s / baseV) * 100)) : 0;
+    const pRate = v > 0 ? Math.min(100, Math.round((p / baseV) * 100)) : 0;
+    const cRate = v > 0 ? Math.min(100, Math.round((c / baseV) * 100)) : 0;
+    const wRate = v > 0 ? Math.min(100, Math.round((w / baseV) * 100)) : 0;
+
+    // Dropoff per Step
+    const sDrop = Math.max(0, 100 - sRate);
+    const pDrop = Math.max(0, 100 - pRate);
+    const cDrop = Math.max(0, 100 - cRate);
+    const wDrop = Math.max(0, 100 - wRate);
+
+    // Visitor-to-WA Conversion Real
+    const overallConv = v > 0 ? Math.min(100, ((w / baseV) * 100)).toFixed(1) : "0.0";
+    
+    // Cart-to-WA Conversion Real
+    const cartToWa = c > 0 ? Math.min(100, ((w / c) * 100)).toFixed(1) : "0";
+
+    // Hitung Retention Rate dari database orders (klien dengan nomor sama > 1x)
+    const phoneMap = {};
+    orders.forEach(o => {
+        const phone = String(o.customerPhone || '').replace(/\D/g, '');
+        if (phone) phoneMap[phone] = (phoneMap[phone] || 0) + 1;
+    });
+    const uniqueClients = Object.keys(phoneMap).length;
+    const repeatClients = Object.values(phoneMap).filter(count => count > 1).length;
+    const retRate = uniqueClients > 0 ? Math.round((repeatClients / uniqueClients) * 100) : 0;
+
+    // Hitung Average Order Value (AOV)
+    const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+    const aov = orders.length > 0 ? Math.round(totalRevenue / orders.length) : 0;
+
+    this.funnelMetrics = {
+        overallConversionRate: overallConv,
+        cartToWaRate: cartToWa,
+        retentionRate: retRate,
+        averageOrderValue: aov,
+        stages: {
+            visitors: { count: v, rate: v > 0 ? 100 : 0, dropoff: 0 },
+            scrollers: { count: s, rate: sRate, dropoff: sDrop },
+            productClicks: { count: p, rate: pRate, dropoff: pDrop },
+            checkoutViews: { count: c, rate: cRate, dropoff: cDrop },
+            waConversions: { count: w, rate: wRate, dropoff: wDrop }
+        },
+        insights: {
+            biggestDropoffText: sDrop > pDrop && sDrop > cDrop 
+                ? `Penurunan terbesar pada tahap awal (${sDrop}% pengunjung tidak membaca/scroll ke bawah).` 
+                : `Penurunan terbesar ada di tahap checkout (${cDrop}% melihat keranjang tapi belum submit WA).`,
+            ctaEfficiencyText: `${cartToWa}% dari pengunjung yang membuka formulir checkout berhasil lanjut menghubungi WA Admin.`,
+            retentionText: `${retRate}% dari seluruh klien terdata melakukan repeat order.`
+        }
+    };
+},
+        renderFunnelCharts() {
+            const destroyChart = (id) => {
+                if (charts[id]) {
+                    charts[id].destroy();
+                    delete charts[id];
+                }
+            };
+
+            const theme = { text: '#94a3b8', grid: 'rgba(255, 255, 255, 0.06)', font: "'Inter', sans-serif" };
+
+            // 1. Chart Step Bar Funnel
+            destroyChart('chartFunnelSteps');
+            const ctx1 = document.getElementById('chartFunnelSteps');
+            if (ctx1) {
+                const st = this.funnelMetrics.stages;
+                charts['chartFunnelSteps'] = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1. Awareness', '2. Interest', '3. Consideration', '4. Desire', '5. Conversion'],
+                        datasets: [{
+                            label: 'Jumlah Interaksi',
+                            data: [st.visitors.count, st.scrollers.count, st.productClicks.count, st.checkoutViews.count, st.waConversions.count],
+                            backgroundColor: ['#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'],
+                            borderRadius: 8,
+                            barThickness: 24
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: theme.grid }, beginAtZero: true },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // 2. Chart Distribution Doughnut
+            destroyChart('chartFunnelDistribution');
+            const ctx2 = document.getElementById('chartFunnelDistribution');
+            if (ctx2) {
+                const st = this.funnelMetrics.stages;
+                charts['chartFunnelDistribution'] = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Scroll (>40%)', 'Klik Layanan', 'Buka Checkout', 'Kirim WA'],
+                        datasets: [{
+                            data: [st.scrollers.count, st.productClicks.count, st.checkoutViews.count, st.waConversions.count],
+                            backgroundColor: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981'],
+                            borderWidth: 0,
+                            cutout: '70%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'right', labels: { boxWidth: 12, padding: 10 } }
+                        }
+                    }
+                });
+            }
+        },
+    
         getTabTitle() {
             const titles = {
                 'dashboard': 'Control Center Analytics',
@@ -3812,31 +6670,38 @@ function adminApp() {
             }
         },
 
-        async saveAdsSettings() {
+async saveAdsSettings() {
             this.isSavingAds = true;
+            
             const payload = new URLSearchParams({
                 action: 'update_settings',
-                ads_status: this.adsForm.ads_status,
-                ads_text: this.adsForm.ads_text,
-                ads_btn_text: this.adsForm.ads_btn_text,
-                ads_link: this.adsForm.ads_link
+                ads_status: this.adsForm.ads_status || 'active',
+                ads_text: this.adsForm.ads_text || '',
+                ads_btn_text: this.adsForm.ads_btn_text || '',
+                ads_link: this.adsForm.ads_link || '',
+                // Data input pop-up dari form admin
+                popup_status: this.adsForm.popup_status || 'active',
+                popup_title: this.adsForm.popup_title || 'Flash Sale',
+                popup_desc: this.adsForm.popup_desc || 'Klaim penawaran khusus ini sebelum waktu habis.',
+                popup_discount: this.adsForm.popup_discount || 'APOLLOCOMBO',
+                popup_timer: String(this.adsForm.popup_timer || '2'),
+                popup_image: this.adsForm.popup_image || ''
             });
 
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: payload });
                 const json = await res.json();
                 if (json.status === 'success') {
-                    alert("✅ Pengaturan Banner Ads berhasil disimpan dan aktif di website!");
+                    alert("✅ Pengaturan Pop-Up berhasil disimpan ke database!");
                 } else {
-                    alert("❌ Gagal menyimpan Ads.");
+                    alert("❌ Gagal: " + json.message);
                 }
-            } catch (e) {
-                alert("Gagal terhubung ke server database.");
+            } catch(e) {
+                alert("Gagal koneksi ke server database.");
             } finally {
                 this.isSavingAds = false;
             }
-        },
-
+        },    
         downloadCSV() {
             window.location.href = `${SCRIPT_URL}?action=download_users_csv`;
         },
@@ -3850,7 +6715,137 @@ function adminApp() {
                 alert("Gagal membersihkan cache.");
             }
         },
+// =================================================================
+        // HISTORY & AUDIT LOG TRANSACTION SYSTEM
+        // =================================================================
+        
+        // Helper untuk mencocokkan email user berdasarkan idUser atau no WA dari database Users
+        getUserEmail(idUser, phone) {
+            // Cek jika orders memiliki relasi ke data Users yang diexport
+            if (this.analyticsData && this.analyticsData.userDirectory) {
+                const found = this.analyticsData.userDirectory.find(u => u.idUser === idUser || u.noWa === phone);
+                if (found && found.email) return found.email;
+            }
+            return (idUser && idUser !== 'GUEST') ? `${idUser.toLowerCase()}@client.com` : 'Tamu / Direct WA';
+        },
 
+        get filteredHistory() {
+            let list = this.orders || [];
+
+            // Filter Status
+            if (this.historyStatusFilter !== 'Semua') {
+                list = list.filter(o => o.statusPesanan === this.historyStatusFilter);
+            }
+
+            // Filter Search (ID, Nama, Phone, Items, Payment)
+            if (this.historySearch.trim() !== '') {
+                const q = this.historySearch.toLowerCase().trim();
+                list = list.filter(o => 
+                    String(o.idTransaksi || '').toLowerCase().includes(q) ||
+                    String(o.customerName || '').toLowerCase().includes(q) ||
+                    String(o.customerPhone || '').toLowerCase().includes(q) ||
+                    String(o.itemsList || '').toLowerCase().includes(q) ||
+                    String(o.selectedPayment || '').toLowerCase().includes(q)
+                );
+            }
+
+            return list;
+        },
+
+        get historyGrossTotal() {
+            return (this.filteredHistory || []).reduce((acc, curr) => acc + (Number(curr.total) || 0), 0);
+        },
+
+        openHistoryDetailModal(order) {
+            this.selectedHistoryItem = order;
+            this.historyModalOpen = true;
+        },
+
+        // 1. EXPORT TO REAL MICROSOFT EXCEL (.XLSX) VIA SHEETJS
+        exportHistoryXLSX() {
+            if (!this.filteredHistory || this.filteredHistory.length === 0) {
+                alert("Tidak ada data transaksi untuk diexport!");
+                return;
+            }
+
+            // Siapkan struktur tabel yang rapi untuk Excel
+            const excelData = this.filteredHistory.map((item, index) => ({
+                "No": index + 1,
+                "ID Transaksi": item.idTransaksi,
+                "Tanggal & Waktu": item.transactionDate,
+                "Nama Pelanggan": item.customerName,
+                "Email Pelanggan": this.getUserEmail(item.idUser, item.customerPhone),
+                "No. WhatsApp": item.customerPhone,
+                "Metode Pembayaran": item.selectedPayment || 'Transfer',
+                "Total Nominal (IDR)": Number(item.total) || 0,
+                "Status Pesanan": item.statusPesanan,
+                "Rincian Layanan & Brief": item.itemsList
+            }));
+
+            // Buat Workbook & Worksheet dengan SheetJS
+            const ws = XLSX.utils.json_to_sheet(excelData);
+
+            // Atur lebar kolom otomatis agar rapi saat dibuka di Excel
+            ws['!cols'] = [
+                { wch: 5 },  // No
+                { wch: 18 }, // ID Transaksi
+                { wch: 22 }, // Tanggal & Waktu
+                { wch: 25 }, // Nama Pelanggan
+                { wch: 28 }, // Email
+                { wch: 18 }, // No WA
+                { wch: 20 }, // Pembayaran
+                { wch: 20 }, // Total
+                { wch: 20 }, // Status
+                { wch: 60 }  // Rincian
+            ];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Log Transaksi Apollo");
+
+            // Unduh file .xlsx langsung ke komputer
+            const fileName = `Log_Transaksi_ApolloBrand_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        },
+
+        // 2. EXPORT TO UNIVERSAL CSV (.CSV)
+        exportHistoryCSV() {
+            if (!this.filteredHistory || this.filteredHistory.length === 0) {
+                alert("Tidak ada data transaksi untuk diexport!");
+                return;
+            }
+
+            // Standar Excel CSV dengan pemisah titik koma (sep=;)
+            let csvContent = "sep=;\n";
+            csvContent += "No;ID Transaksi;Tanggal & Waktu;Nama Pelanggan;Email;No WhatsApp;Metode Pembayaran;Total Nominal;Status Pesanan;Rincian Layanan\n";
+
+            this.filteredHistory.forEach((item, index) => {
+                const clean = text => `"${String(text || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+                
+                const row = [
+                    index + 1,
+                    clean(item.idTransaksi),
+                    clean(item.transactionDate),
+                    clean(item.customerName),
+                    clean(this.getUserEmail(item.idUser, item.customerPhone)),
+                    clean(item.customerPhone),
+                    clean(item.selectedPayment || 'Transfer'),
+                    item.total || 0,
+                    clean(item.statusPesanan),
+                    clean(item.itemsList)
+                ];
+                csvContent += row.join(";") + "\n";
+            });
+
+            // Trigger download via Blob
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Log_Transaksi_ApolloBrand_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
         // =================================================================
         // 8. FORMATTERS & UTILITY HELPERS
         // =================================================================
@@ -3867,6 +6862,27 @@ function adminApp() {
                 currency: 'IDR',
                 minimumFractionDigits: 0
             }).format(clean);
+        },
+        // =================================================================
+        // 8. FORMATTERS & UTILITY HELPERS
+        // =================================================================
+        formatDateDisplay(val) {
+            if (!val) return '-';
+            try {
+                const d = new Date(val);
+                if (!isNaN(d.getTime())) {
+                    const pad = n => String(n).padStart(2, '0');
+                    const day = pad(d.getDate());
+                    const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+                    const month = months[d.getMonth()];
+                    const year = d.getFullYear();
+                    const h = pad(d.getHours());
+                    const m = pad(d.getMinutes());
+                    const s = pad(d.getSeconds());
+                    return `${day} ${month} ${year}, ${h}:${m}:${s} WIB`;
+                }
+            } catch (e) {}
+            return String(val).replace('T', ' ').replace(/\.\d+Z$/, ' WIB');
         },
 
         formatInputPrice(val) {
