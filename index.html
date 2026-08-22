@@ -264,6 +264,17 @@
                 </div>
                 <i class="fa-solid fa-chevron-right text-[9px] opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
             </button>
+            <!-- Menu: Finance Analysis (TAMBAHAN BARU) -->
+<button @click="switchTab('finance_analysis')" 
+        :class="currentTab === 'finance_analysis' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-emerald-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#10b981]"></span>
+        <i class="fa-solid fa-money-bill-trend-up w-4 text-center text-sm" :class="currentTab === 'finance_analysis' ? 'text-emerald-400' : 'text-slate-400 group-hover:text-emerald-300'"></i>
+        <span class="truncate">Finance Analysis</span>
+    </div>
+    <span class="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PROFIT</span>
+</button>
             <!-- Menu: Customer Analysis (TAMBAHAN BARU) -->
 <button @click="switchTab('customer_analysis')" 
         :class="currentTab === 'customer_analysis' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
@@ -296,6 +307,17 @@
                 <!-- Badge Total Pesanan -->
                 <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[9px] font-mono text-slate-300" x-text="orders ? orders.length : '0'"></span>
             </button>
+            <!-- Menu: Survey Dispatch Engine (TAMBAHAN BARU) -->
+<button @click="switchTab('survey_engine')" 
+        :class="currentTab === 'survey_engine' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-emerald-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#10b981]"></span>
+        <i class="fa-solid fa-square-poll-vertical w-4 text-center text-sm" :class="currentTab === 'survey_engine' ? 'text-emerald-400' : 'text-slate-400 group-hover:text-emerald-300'"></i>
+        <span class="truncate">Layanan Kuesioner</span>
+    </div>
+    <span class="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">SURVEY</span>
+</button>
 
             <!-- Menu 3: Kelola Produk / Paket Layanan -->
             <button @click="switchTab('products')" 
@@ -396,6 +418,17 @@
                 </div>
                 <i class="fa-solid fa-chevron-right text-[9px] opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
             </button>
+            <!-- Menu: Calculator Suite (TAMBAHAN BARU) -->
+<button @click="switchTab('calculator')" 
+        :class="currentTab === 'calculator' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-300 text-xs text-left group relative mt-1.5">
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="active-indicator w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 mr-0.5 shadow-[0_0_8px_#06b6d4]"></span>
+        <i class="fa-solid fa-calculator w-4 text-center text-sm" :class="currentTab === 'calculator' ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-300'"></i>
+        <span class="truncate">Kalkulator Serbabisa</span>
+    </div>
+    <span class="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">SUITE</span>
+</button>
             <!-- Menu: Flash Sale Pop-Up (TAMBAHAN BARU) -->
 <button @click="switchTab('popup')" 
         :class="currentTab === 'popup' ? 'nav-tab-active font-bold' : 'nav-tab-inactive font-medium'" 
@@ -547,11 +580,60 @@
 <!-- END TOPBAR HEADER ADMIN APOLLO BRAND -->
 
 <!-- MOBILE SIDEBAR DRAWER (MENU MUNCUL KETIKA HAMBURGER DIKLIK) -->
-<div x-show="mobileSidebarOpen" class="relative z-[150] md:hidden" x-cloak>
-    <!-- Backdrop Gelap -->
-    <div x-show="mobileSidebarOpen" x-transition.opacity class="fixed inset-0 bg-black/80 backdrop-blur-sm" @click="mobileSidebarOpen = false"></div>
+<!-- ========================================================================= -->
+<!-- MOBILE SIDEBAR DRAWER ADMIN APOLLO BRAND (ALL-FEATURES ENTERPRISE DRAWER) -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Mobile Drawer Admin Apollo */
+    .apollo-mobile-drawer {
+        background: linear-gradient(180deg, rgba(14, 9, 36, 0.98) 0%, rgba(3, 0, 20, 0.99) 100%);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 20px 0 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(6, 182, 212, 0.15);
+    }
 
-    <!-- Container Drawer Menu -->
+    /* Active Item Mobile Capsule */
+    .nav-mobile-active {
+        background: linear-gradient(90deg, rgba(6, 182, 212, 0.18) 0%, rgba(168, 85, 247, 0.1) 100%) !important;
+        border: 1px solid rgba(6, 182, 212, 0.45) !important;
+        color: #00f2fe !important;
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.25), inset 0 0 10px rgba(6, 182, 212, 0.05);
+    }
+
+    .nav-mobile-active .mobile-active-bar {
+        opacity: 1 !important;
+        height: 18px !important;
+    }
+
+    /* Inactive Item Mobile */
+    .nav-mobile-inactive {
+        background: transparent;
+        border: 1px solid transparent;
+        color: #94a3b8;
+    }
+
+    .nav-mobile-inactive:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: #f8fafc;
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+</style>
+
+<div x-show="mobileSidebarOpen" class="relative z-[150] md:hidden" x-cloak>
+    
+    <!-- Backdrop Gelap & Blur -->
+    <div x-show="mobileSidebarOpen" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 bg-black/85 backdrop-blur-md" 
+         @click="mobileSidebarOpen = false"></div>
+
+    <!-- Container Drawer Menu (Slide-In dari Kiri) -->
     <div x-show="mobileSidebarOpen"
          x-transition:enter="transform transition ease-out duration-300"
          x-transition:enter-start="-translate-x-full"
@@ -559,72 +641,264 @@
          x-transition:leave="transform transition ease-in duration-200"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="-translate-x-full"
-         class="fixed inset-y-0 left-0 w-72 max-w-[80vw] bg-slate-950 border-r border-slate-800 flex flex-col shadow-2xl z-50">
+         class="fixed inset-y-0 left-0 w-80 max-w-[85vw] apollo-mobile-drawer flex flex-col z-50 overflow-hidden shadow-2xl">
         
-        <!-- Header Drawer -->
-        <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+        <!-- 1. HEADER DRAWER (BRAND IDENTITY & CLOSE BUTTON) -->
+        <div class="p-5 border-b border-white/10 flex justify-between items-center bg-white/[0.02] relative z-10">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-pb-goldlight to-pb-gold flex items-center justify-center text-white shadow-glow shrink-0">
-                    <i class="fa-solid fa-gem text-base"></i>
+                <!-- Glowing Rocket Icon -->
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 p-[1.5px] shadow-[0_0_15px_rgba(6,182,212,0.4)] shrink-0">
+                    <div class="w-full h-full rounded-[10px] bg-[#030014] flex items-center justify-center text-cyan-300">
+                        <i class="fa-solid fa-rocket text-sm"></i>
+                    </div>
                 </div>
                 <div>
-                    <h1 class="font-serif font-bold text-white text-base leading-none">Putra Barokah</h1>
-                    <p class="text-[8px] text-pb-gold uppercase tracking-[0.2em] font-bold mt-0.5">Admin Panel</p>
+                    <h1 class="font-sans font-bold text-white text-base leading-none tracking-tight flex items-center gap-1.5">
+                        <span>Apollo Brand</span>
+                        <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">PRO</span>
+                    </h1>
+                    <p class="text-[8px] text-cyan-400 uppercase tracking-[0.25em] font-semibold mt-1">Mobile Control Hub</p>
                 </div>
             </div>
-            <button @click="mobileSidebarOpen = false" class="text-slate-400 hover:text-white p-1">
-                <i class="fa-solid fa-xmark text-lg"></i>
+
+            <!-- Tombol Tutup Drawer -->
+            <button type="button" 
+                    @click="mobileSidebarOpen = false" 
+                    class="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition shadow-md cursor-pointer">
+                <i class="fa-solid fa-xmark text-base"></i>
             </button>
         </div>
 
-        <!-- Link Navigasi Menu Admin -->
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <button @click="switchTab('dashboard'); mobileSidebarOpen = false" 
-                    :class="currentTab === 'dashboard' ? 'bg-pb-gold/10 text-pb-gold border-pb-gold/30' : 'text-slate-400 border-transparent hover:bg-slate-800/50 hover:text-white'" 
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium text-sm text-left">
-                <i class="fa-solid fa-chart-pie w-5 text-center"></i> Analitik & Grafik
-            </button>
+        <!-- 2. DAFTAR LENGKAP NAVIGASI MENU ADMIN (TERBAGI 3 KELOMPOK) -->
+        <nav class="flex-1 px-3.5 py-4 space-y-5 overflow-y-auto hide-scroll relative z-10">
+            
+            <!-- KELOMPOK 1: ANALISIS & KINERJA -->
+            <div class="space-y-1">
+                <p class="text-[9px] uppercase tracking-[0.25em] text-slate-500 font-bold px-3 mb-1.5 flex items-center justify-between">
+                    <span>Analisis &amp; Kinerja</span>
+                    <i class="fa-solid fa-chart-line text-[9px] opacity-60"></i>
+                </p>
 
-            <button @click="switchTab('orders'); mobileSidebarOpen = false" 
-                    :class="currentTab === 'orders' ? 'bg-pb-gold/10 text-pb-gold border-pb-gold/30' : 'text-slate-400 border-transparent hover:bg-slate-800/50 hover:text-white'" 
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium text-sm text-left">
-                <i class="fa-solid fa-list-check w-5 text-center"></i> Manajemen Pesanan
-            </button>
+                <!-- 1. Analitik & Grafik -->
+                <button @click="switchTab('dashboard')" 
+                        :class="currentTab === 'dashboard' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-chart-pie w-4 text-center text-sm" :class="currentTab === 'dashboard' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Analitik &amp; Grafik</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[8px] opacity-40"></i>
+                </button>
 
-            <button @click="switchTab('users'); mobileSidebarOpen = false" 
-                    :class="currentTab === 'users' ? 'bg-pb-gold/10 text-pb-gold border-pb-gold/30' : 'text-slate-400 border-transparent hover:bg-slate-800/50 hover:text-white'" 
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium text-sm text-left">
-                <i class="fa-solid fa-users w-5 text-center"></i> Database Pelanggan
-            </button>
+                <!-- 2. Customer Analysis (Funnel) -->
+                <button @click="switchTab('customer_analysis')" 
+                        :class="currentTab === 'customer_analysis' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-filter-circle-dollar w-4 text-center text-sm" :class="currentTab === 'customer_analysis' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Customer Analysis</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">FUNNEL</span>
+                </button>
 
-            <button @click="switchTab('tools'); mobileSidebarOpen = false" 
-                    :class="currentTab === 'tools' ? 'bg-pb-gold/10 text-pb-gold border-pb-gold/30' : 'text-slate-400 border-transparent hover:bg-slate-800/50 hover:text-white'" 
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium text-sm text-left">
-                <i class="fa-solid fa-screwdriver-wrench w-5 text-center"></i> System Tools
-            </button>
+                <!-- 3. Finance Analysis (Profit & Loss) -->
+                <button @click="switchTab('finance_analysis')" 
+                        :class="currentTab === 'finance_analysis' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-emerald-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#10b981]"></span>
+                        <i class="fa-solid fa-money-bill-trend-up w-4 text-center text-sm" :class="currentTab === 'finance_analysis' ? 'text-emerald-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Finance Analysis</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PROFIT</span>
+                </button>
 
-            <button @click="switchTab('products'); mobileSidebarOpen = false" 
-                    :class="currentTab === 'products' ? 'bg-pb-gold/10 text-pb-gold border-pb-gold/30' : 'text-slate-400 border-transparent hover:bg-slate-800/50 hover:text-white'" 
-                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium text-sm text-left">
-                <i class="fa-solid fa-boxes-stacked w-5 text-center"></i> Kelola Produk
-            </button>
-            <!-- TOMBOL MENU INVENTORY & BARCODE (Tambahkan di Sidebar Desktop & Mobile) -->
-<button @click="switchTab('inventory'); mobileSidebarOpen = false" 
-        :class="currentTab === 'inventory' ? 'bg-pb-gold/10 text-pb-gold border-pb-gold/30' : 'text-slate-400 border-transparent hover:bg-slate-800/50 hover:text-white'" 
-        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition font-medium text-sm text-left">
-    <i class="fa-solid fa-barcode w-5 text-center"></i> Inventory & Barcode
-</button>
+                <!-- 4. Kalkulator Serbabisa -->
+                <button @click="switchTab('calculator')" 
+                        :class="currentTab === 'calculator' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-calculator w-4 text-center text-sm" :class="currentTab === 'calculator' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Kalkulator Serbabisa</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">SUITE</span>
+                </button>
+            </div>
+
+            <!-- KELOMPOK 2: OPERASIONAL KLIEN -->
+            <div class="space-y-1">
+                <p class="text-[9px] uppercase tracking-[0.25em] text-slate-500 font-bold px-3 mb-1.5 flex items-center justify-between">
+                    <span>Operasional Klien</span>
+                    <i class="fa-solid fa-layer-group text-[9px] opacity-60"></i>
+                </p>
+
+                <!-- 5. Manajemen Pesanan -->
+                <button @click="switchTab('orders')" 
+                        :class="currentTab === 'orders' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-list-check w-4 text-center text-sm" :class="currentTab === 'orders' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Manajemen Pesanan</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[9px] font-mono text-slate-300" x-text="orders ? orders.length : '0'"></span>
+                </button>
+
+                <!-- 6. Paket & Layanan -->
+                <button @click="switchTab('products')" 
+                        :class="currentTab === 'products' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-boxes-stacked w-4 text-center text-sm" :class="currentTab === 'products' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Paket &amp; Layanan</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[8px] opacity-40"></i>
+                </button>
+
+                <!-- 7. Enterprise Packages -->
+                <button @click="switchTab('packages')" 
+                        :class="currentTab === 'packages' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-purple-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#c084fc]"></span>
+                        <i class="fa-solid fa-cubes-stacked w-4 text-center text-sm" :class="currentTab === 'packages' ? 'text-purple-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Enterprise Packages</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">BUNDLE</span>
+                </button>
+
+                <!-- 8. Layanan Kuesioner (Survey Engine) -->
+                <button @click="switchTab('survey_engine')" 
+                        :class="currentTab === 'survey_engine' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-emerald-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#10b981]"></span>
+                        <i class="fa-solid fa-square-poll-vertical w-4 text-center text-sm" :class="currentTab === 'survey_engine' ? 'text-emerald-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Layanan Kuesioner</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">SURVEY</span>
+                </button>
+
+                <!-- 9. Control Coin System -->
+                <button @click="switchTab('coins')" 
+                        :class="currentTab === 'coins' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-amber-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#f59e0b]"></span>
+                        <i class="fa-solid fa-coins w-4 text-center text-sm" :class="currentTab === 'coins' ? 'text-amber-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Control Coin</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">REWARD</span>
+                </button>
+
+                <!-- 10. History Transaksi -->
+                <button @click="switchTab('history')" 
+                        :class="currentTab === 'history' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-emerald-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#10b981]"></span>
+                        <i class="fa-solid fa-clock-rotate-left w-4 text-center text-sm" :class="currentTab === 'history' ? 'text-emerald-400' : 'text-slate-400'"></i>
+                        <span class="truncate">History Transaksi</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">LOG</span>
+                </button>
+
+                <!-- 11. Nota Pembayaran (Invoices) -->
+                <button @click="switchTab('invoices')" 
+                        :class="currentTab === 'invoices' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-file-invoice-dollar w-4 text-center text-sm" :class="currentTab === 'invoices' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Nota Pembayaran</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">PDF/PNG</span>
+                </button>
+
+                <!-- 12. Inventory & Barcode -->
+                <button @click="switchTab('inventory')" 
+                        :class="currentTab === 'inventory' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-barcode w-4 text-center text-sm" :class="currentTab === 'inventory' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Inventory &amp; Barcode</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[8px] opacity-40"></i>
+                </button>
+            </div>
+
+            <!-- KELOMPOK 3: DATABASE & SISTEM -->
+            <div class="space-y-1">
+                <p class="text-[9px] uppercase tracking-[0.25em] text-slate-500 font-bold px-3 mb-1.5 flex items-center justify-between">
+                    <span>Database &amp; Sistem</span>
+                    <i class="fa-solid fa-server text-[9px] opacity-60"></i>
+                </p>
+
+                <!-- 13. Database Pelanggan -->
+                <button @click="switchTab('users')" 
+                        :class="currentTab === 'users' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-users-gear w-4 text-center text-sm" :class="currentTab === 'users' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Database Pelanggan</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[8px] opacity-40"></i>
+                </button>
+
+                <!-- 14. Flash Sale Pop-Up Config -->
+                <button @click="switchTab('popup')" 
+                        :class="currentTab === 'popup' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-pink-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#ec4899]"></span>
+                        <i class="fa-solid fa-gift w-4 text-center text-sm" :class="currentTab === 'popup' ? 'text-pink-400' : 'text-slate-400'"></i>
+                        <span class="truncate">Flash Sale Pop-Up</span>
+                    </div>
+                    <span class="px-1.5 py-0.2 rounded text-[7px] font-mono font-bold bg-pink-500/10 text-pink-400 border border-pink-500/20">FOMO</span>
+                </button>
+
+                <!-- 15. System Tools & Ads -->
+                <button @click="switchTab('tools')" 
+                        :class="currentTab === 'tools' ? 'nav-mobile-active font-bold' : 'nav-mobile-inactive font-medium'" 
+                        class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 text-xs text-left group">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="mobile-active-bar w-1 h-0 bg-cyan-400 rounded-full transition-all duration-300 opacity-0 -ml-1 shadow-[0_0_8px_#06b6d4]"></span>
+                        <i class="fa-solid fa-screwdriver-wrench w-4 text-center text-sm" :class="currentTab === 'tools' ? 'text-cyan-400' : 'text-slate-400'"></i>
+                        <span class="truncate">System Tools &amp; Ads</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[8px] opacity-40"></i>
+                </button>
+            </div>
+
         </nav>
 
-        <!-- Footer Drawer -->
-        <div class="p-4 border-t border-slate-800 bg-slate-900/50">
-            <div class="flex items-center gap-2 px-3 py-1">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs text-slate-400 font-mono">Sistem Online</span>
+        <!-- 3. FOOTER DRAWER (ONLINE ENGINE STATUS & LOGOUT) -->
+        <div class="p-4 border-t border-white/10 bg-white/[0.02] relative z-10 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_#10b981]"></span>
+                </span>
+                <span class="text-[10px] text-slate-300 font-mono">Engine Active</span>
             </div>
+            
+            <button type="button" 
+                    @click="logoutAdmin()" 
+                    class="px-3 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500 border border-rose-500/20 text-rose-400 hover:text-white transition text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <span>Logout</span>
+            </button>
         </div>
+
     </div>
 </div>
+<!-- ========================================================================= -->
 
 
         <!-- CONTENT AREA -->
@@ -1315,7 +1589,521 @@
 
 </div>
 <!-- END TAB 2: MANAJEMEN PESANAN ADMIN APOLLO BRAND -->
+<!-- ========================================================================= -->
+<!-- TAB: FINANCE ANALYSIS & PROFIT MARGIN DASHBOARD ADMIN APOLLO BRAND -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Finance Analysis Apollo */
+    .apollo-finance-panel {
+        background: linear-gradient(155deg, rgba(20, 15, 45, 0.65) 0%, rgba(5, 2, 18, 0.85) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(16, 185, 129, 0.4); /* Emerald Glow */
+        border-left: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+        position: relative;
+        overflow: hidden;
+    }
 
+    .finance-kpi-card {
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .finance-kpi-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Ambient Corner Glow Mesh */
+    .finance-glow-emerald {
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 130px;
+        height: 130px;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .finance-glow-rose {
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 130px;
+        height: 130px;
+        background: radial-gradient(circle, rgba(244, 63, 94, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .finance-glow-cyan {
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 130px;
+        height: 130px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .finance-glow-amber {
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 130px;
+        height: 130px;
+        background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    /* Button Primary */
+    .btn-add-expense-glow {
+        background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #8b5cf6 100%);
+        box-shadow: 0 0 25px rgba(244, 63, 94, 0.35);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-add-expense-glow:hover {
+        box-shadow: 0 0 35px rgba(244, 63, 94, 0.6);
+        transform: translateY(-2px) scale(1.02);
+    }
+</style>
+
+<div x-show="currentTab === 'finance_analysis' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. TOP OVERVIEW & ACTION TOOLBAR -->
+    <div class="apollo-finance-panel p-6 sm:p-7 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-widest">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Executive P&amp;L Ledger &bull; Net Profit Engine
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
+                <i class="fa-solid fa-vault text-emerald-400 text-lg"></i>
+                <span>Financial Cashflow &amp; Profit Margin Dashboard</span>
+            </h3>
+            <p class="text-xs text-slate-400 font-light">Pembukuan laba rugi otomatis: lacak omzet kotor (*Gross Revenue*), biaya server AI &amp; hosting, honor penulis freelance, potongan gateway, dan margin laba bersih (*Net Profit*).</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 shrink-0">
+            <!-- Tombol Catat Pengeluaran -->
+            <button type="button" 
+                    @click="openAddExpenseModal()" 
+                    class="btn-add-expense-glow px-5 py-3 rounded-xl text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-lg">
+                <i class="fa-solid fa-plus text-xs"></i>
+                <span>Catat Pengeluaran</span>
+            </button>
+
+            <!-- Ekspor Laporan Keuangan CSV -->
+            <button type="button" 
+                    @click="exportFinanceCSV()" 
+                    class="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white transition flex items-center gap-2">
+                <i class="fa-solid fa-file-csv text-cyan-400 text-sm"></i>
+                <span>Unduh Laporan</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. 4 FINANCIAL KPI STATEMENTS (GROSS, EXPENSE, NET PROFIT & MARGIN) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        
+        <!-- KPI 1: Gross Revenue (Omzet Kotor) -->
+        <div class="finance-kpi-card p-6 flex flex-col justify-between hover:border-emerald-500/40">
+            <div class="finance-glow-emerald"></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <span class="text-[10px] text-emerald-400 uppercase tracking-[0.2em] font-bold">Gross Revenue</span>
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                </div>
+            </div>
+            
+            <div class="relative z-10 space-y-1">
+                <h4 class="text-2xl sm:text-3xl font-black font-mono text-emerald-400 tracking-tight" 
+                    x-text="formatRupiah(financialSummary.grossRevenue)"></h4>
+                <p class="text-[11px] text-slate-400 font-light">Akumulasi seluruh transaksi terkonfirmasi</p>
+            </div>
+        </div>
+
+        <!-- KPI 2: Total Pengeluaran (COGS + OPEX) -->
+        <div class="finance-kpi-card p-6 flex flex-col justify-between hover:border-rose-500/40">
+            <div class="finance-glow-rose"></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <span class="text-[10px] text-rose-400 uppercase tracking-[0.2em] font-bold">Total Pengeluaran</span>
+                <div class="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-arrow-trend-down"></i>
+                </div>
+            </div>
+            
+            <div class="relative z-10 space-y-1">
+                <h4 class="text-2xl sm:text-3xl font-black font-mono text-rose-400 tracking-tight" 
+                    x-text="formatRupiah(financialSummary.totalExpenses)"></h4>
+                <div class="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-0.5">
+                    <span>HPP: <strong class="text-slate-300" x-text="formatRupiah(financialSummary.totalCogs)"></strong></span>
+                    <span>OPEX: <strong class="text-slate-300" x-text="formatRupiah(financialSummary.totalOpex)"></strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 3: Laba Bersih (Net Profit) & Margin % -->
+        <div class="finance-kpi-card p-6 flex flex-col justify-between hover:border-cyan-500/40">
+            <div class="finance-glow-cyan"></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <span class="text-[10px] text-cyan-400 uppercase tracking-[0.2em] font-bold">Net Profit (Laba Bersih)</span>
+                <div class="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-piggy-bank"></i>
+                </div>
+            </div>
+            
+            <div class="relative z-10 space-y-1">
+                <h4 class="text-2xl sm:text-3xl font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 tracking-tight" 
+                    x-text="formatRupiah(financialSummary.netProfit)"></h4>
+                <div class="flex items-center gap-1.5 text-[11px] font-mono font-bold"
+                     :class="financialSummary.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'">
+                    <i class="fa-solid" :class="financialSummary.netProfit >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'"></i>
+                    <span x-text="'Net Margin: ' + financialSummary.netProfitMargin + '%'"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 4: Potongan Fee Gateway & AI Server -->
+        <div class="finance-kpi-card p-6 flex flex-col justify-between hover:border-amber-500/40">
+            <div class="finance-glow-amber"></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+                <span class="text-[10px] text-amber-400 uppercase tracking-[0.2em] font-bold">Fee Gateway &amp; Server AI</span>
+                <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-microchip"></i>
+                </div>
+            </div>
+            
+            <div class="relative z-10 space-y-1">
+                <h4 class="text-2xl sm:text-3xl font-black font-mono text-amber-300 tracking-tight" 
+                    x-text="formatRupiah(financialSummary.techAndGatewayFees)"></h4>
+                <p class="text-[11px] text-slate-400 font-light">Potongan QRIS/Bank + Biaya API Gemini</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 3. FINANCIAL CHARTS DUAL ENGINE (CASHFLOW TRENDS & EXPENSE PROPORTION) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
+        
+        <!-- Chart 1: Cashflow & Profit Trends (7 Kolom Desktop) -->
+        <div class="lg:col-span-7 apollo-finance-panel p-6 sm:p-7 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Tren Arus Kas &amp; Laba Bersih</h4>
+                        <p class="text-[10px] text-slate-400">Komparasi pendapatan vs pengeluaran</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 text-[9px] font-mono font-bold">P&amp;L Trend</span>
+            </div>
+            <div class="relative h-64 sm:h-72 w-full">
+                <canvas id="chartCashflowTrends"></canvas>
+            </div>
+        </div>
+
+        <!-- Chart 2: Proporsi Beban Pengeluaran (5 Kolom Desktop) -->
+        <div class="lg:col-span-5 apollo-finance-panel p-6 sm:p-7 flex flex-col justify-between">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Distribusi Alokasi Biaya</h4>
+                        <p class="text-[10px] text-slate-400">Rasio beban operasional &amp; HPP</p>
+                    </div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[9px] font-mono font-bold">Cost Breakdown</span>
+            </div>
+            <div class="relative h-64 sm:h-72 w-full flex items-center justify-center">
+                <canvas id="chartExpenseDistribution"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 4. TABEL EXPENSE LEDGER (PEMBUKUAN BIAYA OPERASIONAL & COGS) -->
+    <div class="apollo-finance-panel border-white/10 overflow-hidden space-y-4 p-5 sm:p-6">
+        
+        <!-- Table Filter Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-4">
+            <div>
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-cyan-400"></i>
+                    <span>Buku Kas Pengeluaran (Expense Ledger)</span>
+                </h4>
+                <p class="text-[10px] text-slate-400">Daftar biaya operasional, honor freelance, langganan server, dan potongan transaksi.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Filter Kategori Dropdown -->
+                <div class="relative">
+                    <select x-model="expenseCategoryFilter" 
+                            class="bg-slate-950/90 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white appearance-none cursor-pointer pr-8 focus:border-cyan-400 focus:outline-none font-medium">
+                        <option value="Semua">Semua Kategori Biaya</option>
+                        <option value="Server & AI">Server &amp; AI API</option>
+                        <option value="Penulis / Dev Freelance">Penulis &amp; Dev Freelance</option>
+                        <option value="Cloud Hosting & Domain">Cloud Hosting &amp; Domain</option>
+                        <option value="Fee Gateway / Bank">Fee Gateway &amp; Admin Bank</option>
+                        <option value="Marketing & Ads">Marketing &amp; Ads Promo</option>
+                        <option value="Operasional Studio">Operasional Studio</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 pointer-events-none"></i>
+                </div>
+
+                <!-- Search Field -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                    <input x-model="expenseSearch" 
+                           type="text" 
+                           placeholder="Cari nama biaya / ID..." 
+                           class="bg-slate-950/80 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 transition font-sans w-48 sm:w-56">
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Responsive -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-white/[0.03] text-[9px] uppercase tracking-[0.2em] text-slate-400 border-b border-white/10 font-mono">
+                    <tr>
+                        <th class="py-3 px-4 font-bold">ID &amp; Tanggal</th>
+                        <th class="py-3 px-4 font-bold">Uraian Pengeluaran</th>
+                        <th class="py-3 px-4 font-bold">Kategori Biaya</th>
+                        <th class="py-3 px-4 font-bold">Klasifikasi</th>
+                        <th class="py-3 px-4 font-bold">Nominal (IDR)</th>
+                        <th class="py-3 px-4 font-bold">Catatan / Referensi</th>
+                        <th class="py-3 px-4 text-center font-bold">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    <template x-for="item in filteredExpenses" :key="item.idExpense">
+                        <tr class="hover:bg-white/[0.03] transition">
+                            
+                            <!-- Col 1: ID & Tanggal -->
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="font-mono font-bold text-cyan-400 text-[11px] block" x-text="item.idExpense"></span>
+                                <span class="text-[9px] text-slate-500 font-mono" x-text="item.date"></span>
+                            </td>
+
+                            <!-- Col 2: Uraian Biaya -->
+                            <td class="py-3 px-4 font-bold text-white max-w-[200px] truncate" x-text="item.title"></td>
+
+                            <!-- Col 3: Kategori Badge -->
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="px-2.5 py-1 rounded-lg text-[10px] font-medium border"
+                                      :class="item.category === 'Server & AI' ? 'bg-purple-500/10 text-purple-300 border-purple-500/30' : (item.category === 'Penulis / Dev Freelance' ? 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30' : (item.category === 'Fee Gateway / Bank' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' : 'bg-white/5 text-slate-300 border-white/10'))"
+                                      x-text="item.category"></span>
+                            </td>
+
+                            <!-- Col 4: Klasifikasi (COGS vs OPEX) -->
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase tracking-wider"
+                                      :class="item.expenseType === 'COGS' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'"
+                                      x-text="item.expenseType"></span>
+                            </td>
+
+                            <!-- Col 5: Nominal Biaya -->
+                            <td class="py-3 px-4 whitespace-nowrap font-mono font-bold text-rose-400 text-sm" 
+                                x-text="'- ' + formatRupiah(item.amount)"></td>
+
+                            <!-- Col 6: Catatan / Bukti -->
+                            <td class="py-3 px-4 text-slate-400 max-w-[180px] truncate" x-text="item.notes || '-'"></td>
+
+                            <!-- Col 7: Aksi (Edit & Hapus) -->
+                            <td class="py-3 px-4 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button type="button" 
+                                            @click="openEditExpenseModal(item)" 
+                                            class="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-slate-950 transition flex items-center justify-center text-xs" 
+                                            title="Edit Biaya">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button type="button" 
+                                            @click="deleteExpenseItem(item.idExpense)" 
+                                            class="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white transition flex items-center justify-center text-xs" 
+                                            title="Hapus Biaya">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </template>
+
+                    <!-- Empty State Tabel -->
+                    <template x-if="filteredExpenses.length === 0">
+                        <tr>
+                            <td colspan="7" class="py-14 text-center text-slate-500 font-mono text-xs">
+                                <i class="fa-solid fa-receipt text-2xl block mb-2 opacity-40"></i>
+                                Belum ada catatan pengeluaran di buku kas. Klik "Catat Pengeluaran" di atas.
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- 5. MODAL FORM CATAT PENGELUARAN (TAMBAH / EDIT EXPENSE) -->
+    <div x-show="expenseModalOpen" class="relative z-[120]" x-cloak>
+        <div x-show="expenseModalOpen" 
+             x-transition.opacity 
+             class="fixed inset-0 bg-[#030014]/85 backdrop-blur-2xl" 
+             @click="expenseModalOpen = false"></div>
+        
+        <div class="fixed inset-0 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <div x-show="expenseModalOpen" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                 class="apollo-product-modal w-full max-w-xl relative overflow-hidden my-auto shadow-2xl">
+                
+                <!-- Header Modal -->
+                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/[0.02]">
+                    <div class="space-y-0.5">
+                        <span class="text-[9px] text-rose-400 font-mono font-bold uppercase tracking-wider block">Expense Journal Entry</span>
+                        <h3 class="text-lg font-bold text-white tracking-tight" 
+                            x-text="expenseFormMode === 'add' ? 'Catat Pengeluaran / Beban Kas' : 'Edit Catatan Pengeluaran'"></h3>
+                    </div>
+                    
+                    <button type="button" 
+                            @click.stop="expenseModalOpen = false" 
+                            class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition shadow-md cursor-pointer"
+                            title="Tutup">
+                        <i class="fa-solid fa-xmark text-sm pointer-events-none"></i>
+                    </button>
+                </div>
+
+                <!-- Body Form -->
+                <form @submit.prevent="saveExpenseSubmit()" class="p-6 space-y-4 text-xs">
+                    
+                    <!-- Uraian Biaya -->
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">
+                            Uraian / Deskripsi Biaya <span class="text-rose-400">*</span>
+                        </label>
+                        <input type="text" x-model="expenseForm.title" required 
+                               placeholder="Contoh: Tagihan Google AI Studio (API Gemini) / Honor Skripsi #APL-613414" 
+                               class="w-full apollo-product-input px-3.5 py-2.5 text-xs text-white">
+                    </div>
+
+                    <!-- Grid 2 Kolom: Kategori & Tipe -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">
+                                Kategori Pengeluaran <span class="text-rose-400">*</span>
+                            </label>
+                            <select x-model="expenseForm.category" required 
+                                    class="w-full apollo-product-input px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                                <option value="Server & AI" class="bg-slate-950 text-white">Server &amp; AI (Gemini API)</option>
+                                <option value="Penulis / Dev Freelance" class="bg-slate-950 text-white">Honor Penulis / Dev Freelance</option>
+                                <option value="Cloud Hosting & Domain" class="bg-slate-950 text-white">Cloud Hosting &amp; Domain (Vercel/GCP)</option>
+                                <option value="Fee Gateway / Bank" class="bg-slate-950 text-white">Fee Gateway / Potongan QRIS / Bank</option>
+                                <option value="Marketing & Ads" class="bg-slate-950 text-white">Marketing &amp; Iklan Promo</option>
+                                <option value="Operasional Studio" class="bg-slate-950 text-white">Operasional Studio &amp; Perlengkapan</option>
+                                <option value="Lainnya" class="bg-slate-950 text-white">Lain-Lain</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">
+                                Klasifikasi Akuntansi <span class="text-rose-400">*</span>
+                            </label>
+                            <select x-model="expenseForm.expenseType" required 
+                                    class="w-full apollo-product-input px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                                <option value="COGS" class="bg-slate-950 text-rose-300">COGS / HPP (Biaya Langsung Pengerjaan Proyek)</option>
+                                <option value="OPEX" class="bg-slate-950 text-blue-300">OPEX (Biaya Operasional Rutin &amp; Server)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grid 2 Kolom: Nominal & Tanggal -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">
+                                Nominal Biaya (IDR) <span class="text-rose-400">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-rose-400 font-mono">Rp</span>
+                                <input type="text" 
+                                       :value="formatInputPrice(expenseForm.amount)" 
+                                       @input="expenseForm.amount = $event.target.value.replace(/\D/g, '')" 
+                                       required placeholder="150.000" 
+                                       class="w-full apollo-product-input pl-10 pr-3 py-2.5 text-xs text-white font-mono font-bold">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">
+                                Tanggal Pengeluaran <span class="text-rose-400">*</span>
+                            </label>
+                            <input type="date" x-model="expenseForm.date" required 
+                                   class="w-full apollo-product-input px-3.5 py-2.5 text-xs text-white font-mono [color-scheme:dark]">
+                        </div>
+                    </div>
+
+                    <!-- Catatan / Nomor Invoice Bukti -->
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">
+                            Catatan / No. Resi / Invoice Pihak Ketiga (Opsional)
+                        </label>
+                        <textarea x-model="expenseForm.notes" rows="2" 
+                                  placeholder="Contoh: Invoice Vercel #INV-9281 atau Transfer ke Rek Mandiri Tim Riset" 
+                                  class="w-full apollo-product-input px-3.5 py-2.5 text-xs text-white resize-none leading-relaxed"></textarea>
+                    </div>
+
+                    <!-- Modal Actions -->
+                    <div class="pt-3 border-t border-white/10 flex justify-end gap-2.5">
+                        <button type="button" 
+                                @click="expenseModalOpen = false" 
+                                class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold uppercase tracking-wider transition">
+                            Batal
+                        </button>
+                        
+                        <button type="submit" 
+                                :disabled="isSavingExpense" 
+                                class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-bold text-xs uppercase tracking-wider transition flex items-center gap-2 shadow-lg disabled:opacity-50">
+                            <template x-if="isSavingExpense">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...</span>
+                            </template>
+                            <template x-if="!isSavingExpense">
+                                <span>Simpan Entri Kas</span>
+                            </template>
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- ========================================================================= -->
             <!-- TAB 3: USERS & DATABASE -->
 <!-- TAB 3: USERS & DATABASE ADMIN APOLLO BRAND (ULTRA-PREMIUM DATA PIPELINE HUB) -->
 <style>
@@ -2005,7 +2793,539 @@
 </div>
 <!-- ========================================================================= -->
 <!-- END TAB 3: USERS & DATABASE ADMIN APOLLO BRAND -->
+<!-- ========================================================================= -->
+<!-- TAB: ENTERPRISE CALCULATOR SUITE ADMIN APOLLO BRAND (ULTRA-LUXURY) -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Calculator Suite Apollo */
+    .apollo-calc-panel {
+        background: linear-gradient(155deg, rgba(20, 15, 45, 0.65) 0%, rgba(5, 2, 18, 0.85) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(6, 182, 212, 0.4);
+        border-left: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+        position: relative;
+    }
 
+    .calc-subtab-btn {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+        transition: all 0.25s ease;
+    }
+    .calc-subtab-btn:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #ffffff;
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    .calc-subtab-active {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(168, 85, 247, 0.12) 100%) !important;
+        border-color: #06b6d4 !important;
+        color: #00f2fe !important;
+        font-weight: 800 !important;
+        box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
+    }
+
+    .calc-input-box {
+        background: rgba(3, 0, 20, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #f8fafc;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+    }
+    .calc-input-box:focus {
+        outline: none;
+        border-color: #06b6d4;
+        background: rgba(3, 0, 20, 0.95);
+        box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+    }
+
+    /* Live Quote Result Container */
+    .quote-preview-card {
+        background: linear-gradient(160deg, rgba(16, 12, 38, 0.95) 0%, rgba(3, 0, 20, 0.98) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(0, 242, 254, 0.4);
+        border-radius: 24px;
+        box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.9), 0 0 30px rgba(6, 182, 212, 0.1);
+    }
+</style>
+
+<div x-show="currentTab === 'calculator' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. HEADER & SUB-CALCULATOR SELECTOR (5 MODUL) -->
+    <div class="apollo-calc-panel p-6 sm:p-7 space-y-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-bold uppercase tracking-widest">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    Multi-Model Pricing &amp; Mathematical Engine
+                </div>
+                <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
+                    <i class="fa-solid fa-calculator text-cyan-400 text-lg"></i>
+                    <span>Kalkulator Finansial &amp; Estimasi Serbabisa</span>
+                </h3>
+                <p class="text-xs text-slate-400 font-light">Suite kalkulator bisnis komprehensif: simulasi estimasi proyek, rumus sampling Slovin, analisis margin diskon, termin cicilan, dan HPP laba bersih.</p>
+            </div>
+        </div>
+
+        <!-- SUB-TAB SELECTOR (5 SUB-MODUL) -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 hide-scroll pt-1 border-t border-white/10">
+            <button type="button" @click="calcSubTab = 'academic_web'" 
+                    :class="calcSubTab === 'academic_web' ? 'calc-subtab-active' : 'calc-subtab-btn'"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>1. Estimasi Skripsi &amp; Web</span>
+            </button>
+
+            <button type="button" @click="calcSubTab = 'discount_margin'" 
+                    :class="calcSubTab === 'discount_margin' ? 'calc-subtab-active' : 'calc-subtab-btn'"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                <i class="fa-solid fa-tags"></i>
+                <span>2. Diskon &amp; Margin Laba</span>
+            </button>
+
+            <button type="button" @click="calcSubTab = 'survey_slovin'" 
+                    :class="calcSubTab === 'survey_slovin' ? 'calc-subtab-active' : 'calc-subtab-btn'"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                <i class="fa-solid fa-square-poll-vertical"></i>
+                <span>3. Slovin &amp; Responden</span>
+            </button>
+
+            <button type="button" @click="calcSubTab = 'installment_term'" 
+                    :class="calcSubTab === 'installment_term' ? 'calc-subtab-active' : 'calc-subtab-btn'"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>4. Termin &amp; Cicilan</span>
+            </button>
+
+            <button type="button" @click="calcSubTab = 'freelance_cogs'" 
+                    :class="calcSubTab === 'freelance_cogs' ? 'calc-subtab-active' : 'calc-subtab-btn'"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition">
+                <i class="fa-solid fa-handshake"></i>
+                <span>5. HPP &amp; Fee Freelancer</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SUB-MODUL 1: ESTIMASI PROYEK AKADEMIK & WEB (BESPOKE PRICING) -->
+    <!-- ========================================================================= -->
+    <div x-show="calcSubTab === 'academic_web'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Sisi Kiri: Parameter Input (7 Kolom) -->
+        <div class="lg:col-span-7 apollo-calc-panel p-6 sm:p-7 space-y-5">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-cyan-400"></i>
+                    <span>Parameter Proyek Klien</span>
+                </h4>
+                <button type="button" @click="resetAcademicCalc()" class="text-[10px] text-slate-400 hover:text-white transition font-mono">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Reset Parameter
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <!-- Jenis Layanan Pokok -->
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Kategori Layanan *</label>
+                    <select x-model="calcAcademic.serviceType" class="w-full calc-input-box px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                        <option value="skripsi_full">Skripsi / Tugas Akhir Full (Bab 1-5)</option>
+                        <option value="skripsi_partial">Skripsi Parsial (Bab 1-3 / Bab 4-5)</option>
+                        <option value="tesis_s2">Tesis S2 Manajemen</option>
+                        <option value="jurnal_sinta">Paper / Artikel Jurnal SINTA</option>
+                        <option value="olah_data">Olah Data Statistik (SPSS/PLS/AMOS)</option>
+                        <option value="web_landing">Website Landing Page / Portofolio</option>
+                        <option value="web_fullstack">Website Bisnis &amp; E-Commerce</option>
+                        <option value="web_saas">Web App Kustom / Sistem Informasi</option>
+                    </select>
+                </div>
+
+                <!-- Tingkat Akademik / Kompleksitas -->
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Jenjang / Kompleksitas</label>
+                    <select x-model="calcAcademic.level" class="w-full calc-input-box px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                        <option value="d3_s1">Sarjana (D3 / S1 Manajemen)</option>
+                        <option value="s2_magister">Pascasarjana (S2 Magister)</option>
+                        <option value="corporate">Corporate / Bisnis UMKM</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Variabel Penelitian & Halaman Slider -->
+            <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4 text-xs">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-300 font-medium">Jumlah Variabel Penelitian (X &amp; Y):</span>
+                    <span class="font-mono font-bold text-cyan-400" x-text="calcAcademic.variables + ' Variabel'"></span>
+                </div>
+                <input type="range" min="2" max="8" x-model.number="calcAcademic.variables" class="w-full accent-cyan-400 cursor-pointer h-1.5 bg-slate-950 rounded-lg">
+
+                <div class="flex items-center justify-between pt-2 border-t border-white/5">
+                    <span class="text-slate-300 font-medium">SLA Waktu / Deadline:</span>
+                    <span class="font-mono font-bold text-purple-300" x-text="calcAcademic.slaLabel"></span>
+                </div>
+                <select x-model="calcAcademic.sla" class="w-full calc-input-box px-3 py-2 text-xs text-white appearance-none cursor-pointer">
+                    <option value="standard">Reguler (10 - 14 Hari) &bull; Standar</option>
+                    <option value="express">Express (5 - 7 Hari) &bull; +20% Biaya</option>
+                    <option value="rush">Super Rush (2 - 3 Hari) &bull; +40% Biaya</option>
+                </select>
+            </div>
+
+            <!-- Add-on Layanan Tambahan (Checkboxes) -->
+            <div class="space-y-2.5 text-xs">
+                <span class="text-[10px] uppercase tracking-widest text-slate-400 font-bold block">Add-on Layanan Ekstra:</span>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <label class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center gap-3 cursor-pointer hover:border-cyan-400/30 transition">
+                        <input type="checkbox" x-model="calcAcademic.addonOlahData" class="accent-cyan-400 w-4 h-4 rounded">
+                        <span class="text-[11px] text-slate-200">Include Olah Data SPSS/PLS (+400k)</span>
+                    </label>
+
+                    <label class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center gap-3 cursor-pointer hover:border-cyan-400/30 transition">
+                        <input type="checkbox" x-model="calcAcademic.addonTurnitin" class="accent-cyan-400 w-4 h-4 rounded">
+                        <span class="text-[11px] text-slate-200">Uji Turnitin &lt; 10% No Repo (+100k)</span>
+                    </label>
+
+                    <label class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center gap-3 cursor-pointer hover:border-cyan-400/30 transition">
+                        <input type="checkbox" x-model="calcAcademic.addonPPT" class="accent-cyan-400 w-4 h-4 rounded">
+                        <span class="text-[11px] text-slate-200">PPT Sidang &amp; Script Ujian (+150k)</span>
+                    </label>
+
+                    <label class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center gap-3 cursor-pointer hover:border-cyan-400/30 transition">
+                        <input type="checkbox" x-model="calcAcademic.addonZoom" class="accent-cyan-400 w-4 h-4 rounded">
+                        <span class="text-[11px] text-slate-200">Bimbingan Zoom 1-on-1 (+200k)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sisi Kanan: Live Quotation Card & WA Dispatcher (5 Kolom) -->
+        <div class="lg:col-span-5 space-y-4">
+            <div class="quote-preview-card p-6 space-y-5">
+                <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div>
+                        <span class="text-[9px] font-mono text-cyan-400 font-bold uppercase tracking-wider block">Real-time Quotation</span>
+                        <h4 class="text-base font-bold text-white leading-tight">Estimasi Biaya Proyek</h4>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-mono font-bold">
+                        Calculated
+                    </span>
+                </div>
+
+                <!-- Price Breakdown List -->
+                <div class="space-y-2.5 text-xs font-mono">
+                    <div class="flex justify-between text-slate-400">
+                        <span>Biaya Pokok Dasar:</span>
+                        <span class="text-white font-bold" x-text="formatRupiah(calcAcademicTotal.basePrice)"></span>
+                    </div>
+                    <div class="flex justify-between text-slate-400" x-show="calcAcademicTotal.variableAddon > 0">
+                        <span>Tambahan Variabel:</span>
+                        <span class="text-cyan-300" x-text="'+ ' + formatRupiah(calcAcademicTotal.variableAddon)"></span>
+                    </div>
+                    <div class="flex justify-between text-slate-400" x-show="calcAcademicTotal.slaAddon > 0">
+                        <span>Biaya SLA Rush/Kilat:</span>
+                        <span class="text-purple-300" x-text="'+ ' + formatRupiah(calcAcademicTotal.slaAddon)"></span>
+                    </div>
+                    <div class="flex justify-between text-slate-400" x-show="calcAcademicTotal.extraAddons > 0">
+                        <span>Total Add-on Layanan:</span>
+                        <span class="text-pink-300" x-text="'+ ' + formatRupiah(calcAcademicTotal.extraAddons)"></span>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-white/10 text-white font-bold text-sm">
+                        <span class="font-sans text-xs uppercase tracking-wider">TOTAL ESTIMASI:</span>
+                        <span class="text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400" 
+                              x-text="formatRupiah(calcAcademicTotal.finalPrice)"></span>
+                    </div>
+                </div>
+
+                <!-- Action Button: Copy & Send WhatsApp Quotation -->
+                <div class="pt-2 space-y-2">
+                    <button type="button" @click="copyAcademicQuotation()" 
+                            class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] transition">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>Copy Format Penawaran WA</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SUB-MODUL 2: KALKULATOR DISKON & MARGIN LABA (DISCOUNT IMPACT) -->
+    <!-- ========================================================================= -->
+    <div x-show="calcSubTab === 'discount_margin'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <div class="lg:col-span-7 apollo-calc-panel p-6 sm:p-7 space-y-5">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-tags text-purple-400"></i>
+                <span>Simulasi Diskon &amp; Dampak Profit Margin</span>
+            </h4>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Harga Awal / Normal (Rp)</label>
+                    <input type="text" :value="formatInputPrice(calcDiscount.originalPrice)" 
+                           @input="calcDiscount.originalPrice = $event.target.value.replace(/\D/g, '')" 
+                           placeholder="2.000.000" class="w-full calc-input-box px-4 py-3 text-sm font-mono font-bold text-white">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Diskon Persentase (%)</label>
+                        <input type="number" min="0" max="100" x-model.number="calcDiscount.percent" 
+                               class="w-full calc-input-box px-4 py-2.5 text-xs text-cyan-300 font-mono font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Diskon Nominal Tambahan (Rp)</label>
+                        <input type="text" :value="formatInputPrice(calcDiscount.nominal)" 
+                           @input="calcDiscount.nominal = $event.target.value.replace(/\D/g, '')" 
+                           placeholder="50.000" class="w-full calc-input-box px-4 py-2.5 text-xs text-pink-300 font-mono font-bold">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Perkiraan HPP / Biaya Penulis (Rp)</label>
+                    <input type="text" :value="formatInputPrice(calcDiscount.cogs)" 
+                           @input="calcDiscount.cogs = $event.target.value.replace(/\D/g, '')" 
+                           placeholder="800.000" class="w-full calc-input-box px-4 py-2.5 text-xs text-rose-300 font-mono font-bold">
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 apollo-calc-panel p-6 space-y-4">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3">Hasil Evaluasi Diskon</h4>
+            
+            <div class="space-y-3 font-mono text-xs">
+                <div class="flex justify-between text-slate-400">
+                    <span>Total Potongan Diskon:</span>
+                    <span class="text-rose-400 font-bold" x-text="'- ' + formatRupiah(calcDiscountResult.discountValue)"></span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Harga Setelah Diskon:</span>
+                    <span class="text-white font-bold text-sm" x-text="formatRupiah(calcDiscountResult.finalPrice)"></span>
+                </div>
+                <div class="flex justify-between text-slate-400 pt-2 border-t border-white/10">
+                    <span>Estimasi Laba Bersih:</span>
+                    <span class="text-emerald-400 font-bold" x-text="formatRupiah(calcDiscountResult.netProfit)"></span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Profit Margin Bersih:</span>
+                    <span class="font-bold text-sm" :class="calcDiscountResult.marginPct >= 30 ? 'text-emerald-400' : 'text-amber-400'" 
+                          x-text="calcDiscountResult.marginPct + '%'"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SUB-MODUL 3: SLOVIN FORMULA & BIAYA RESPONDEN KUESIONER -->
+    <!-- ========================================================================= -->
+    <div x-show="calcSubTab === 'survey_slovin'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <div class="lg:col-span-7 apollo-calc-panel p-6 sm:p-7 space-y-5">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-square-poll-vertical text-emerald-400"></i>
+                <span>Kalkulator Rumus Slovin &amp; Biaya Responden</span>
+            </h4>
+
+            <div class="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] font-mono leading-relaxed">
+                Rumus Slovin: <strong class="text-white">n = N / (1 + N &times; e&sup2;)</strong><br>
+                Digunakan untuk menentukan ukuran sampel representatif penelitian skripsi manajemen.
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Total Populasi (N)</label>
+                    <input type="number" min="10" x-model.number=" calcSlovin.population" placeholder="Contoh: 1000" 
+                           class="w-full calc-input-box px-4 py-2.5 text-xs text-white font-mono font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Tingkat Margin Error (e)</label>
+                    <select x-model.number="calcSlovin.errorMargin" class="w-full calc-input-box px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                        <option value="0.05">e = 5% (Toleransi 0.05 &bull; Standar Skripsi)</option>
+                        <option value="0.10">e = 10% (Toleransi 0.10 &bull; Eksploratif)</option>
+                        <option value="0.01">e = 1% (Toleransi 0.01 &bull; Sangat Ketat/Tesis)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Add-on Responden -->
+            <div class="space-y-2 text-xs pt-2">
+                <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold">Filter Demografi Responden:</label>
+                <select x-model="calcSlovin.filterType" class="w-full calc-input-box px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                    <option value="none">Random Sampling (Acak) &bull; + Rp 0</option>
+                    <option value="light">Spesifik Ringan (Usia/Gender/Mahasiswa) &bull; + Rp 10k/200</option>
+                    <option value="strict">Spesifik Ketat (Profesi/Brand User) &bull; + Rp 25k/200</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 apollo-calc-panel p-6 space-y-4">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3">Hasil Ukuran Sampel &amp; Biaya</h4>
+            
+            <div class="space-y-3 font-mono text-xs">
+                <div class="flex justify-between text-slate-400">
+                    <span>Rekomendasi Sampel Slovin:</span>
+                    <span class="text-emerald-400 font-black text-base" x-text="calcSlovinResult.sampleSize + ' Responden'"></span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Dibulatkan ke Kelipatan Paket:</span>
+                    <span class="text-white font-bold" x-text="calcSlovinResult.roundedPackage + ' Responden'"></span>
+                </div>
+                <div class="flex justify-between items-center pt-3 border-t border-white/10 text-white font-bold text-sm">
+                    <span class="font-sans text-xs uppercase tracking-wider">TOTAL ESTIMASI BIAYA:</span>
+                    <span class="text-lg text-cyan-300" x-text="formatRupiah(calcSlovinResult.totalCost)"></span>
+                </div>
+            </div>
+
+            <button type="button" @click="copySlovinSummary()" 
+                    class="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg">
+                <i class="fa-solid fa-copy"></i>
+                <span>Salin Hasil Slovin &amp; Biaya</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SUB-MODUL 4: KALKULATOR TERMIN & CICILAN PROYEK (MILESTONE PAYMENT) -->
+    <!-- ========================================================================= -->
+    <div x-show="calcSubTab === 'installment_term'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <div class="lg:col-span-7 apollo-calc-panel p-6 sm:p-7 space-y-5">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-credit-card text-blue-400"></i>
+                <span>Simulasi Skema Termin Pembayaran Bertahap</span>
+            </h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Total Nilai Proyek (Rp)</label>
+                    <input type="text" :value="formatInputPrice(calcTerm.totalProject)" 
+                           @input="calcTerm.totalProject = $event.target.value.replace(/\D/g, '')" 
+                           placeholder="3.000.000" class="w-full calc-input-box px-4 py-2.5 text-xs text-white font-mono font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Skema Termin / Milestone</label>
+                    <select x-model="calcTerm.scheme" class="w-full calc-input-box px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                        <option value="2_step">2x Termin (DP 50% &bull; Pelunasan 50%)</option>
+                        <option value="3_step">3x Termin (DP 40% &bull; Bab 1-3 30% &bull; Pelunasan 30%)</option>
+                        <option value="4_step">4x Termin (DP 30% &bull; Bab 1-3 30% &bull; Bab 4-5 30% &bull; 10%)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 apollo-calc-panel p-6 space-y-4">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3">Rincian Pembayaran Bertahap</h4>
+            
+            <div class="space-y-2.5 text-xs">
+                <template x-for="(term, tIdx) in calcTermMilestones" :key="tIdx">
+                    <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                        <div>
+                            <p class="font-bold text-white text-[11px]" x-text="term.label"></p>
+                            <span class="text-[9px] text-slate-500 font-mono" x-text="term.pct + '% dari Total'"></span>
+                        </div>
+                        <span class="font-mono font-bold text-cyan-300 text-sm" x-text="formatRupiah(term.amount)"></span>
+                    </div>
+                </template>
+            </div>
+
+            <button type="button" @click="copyTermSchedule()" 
+                    class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 shadow-lg">
+                <i class="fa-solid fa-copy"></i>
+                <span>Salin Draf Penagihan Termin WA</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- SUB-MODUL 5: HPP, FEE FREELANCER & NET TAKE-HOME PROFIT -->
+    <!-- ========================================================================= -->
+    <div x-show="calcSubTab === 'freelance_cogs'" x-cloak class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <div class="lg:col-span-7 apollo-calc-panel p-6 sm:p-7 space-y-5">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3 flex items-center gap-2">
+                <i class="fa-solid fa-handshake text-amber-400"></i>
+                <span>Kalkulator Honor Freelancer &amp; Laba Kas Bersih</span>
+            </h4>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Nilai Transaksi Klien (Rp)</label>
+                    <input type="text" :value="formatInputPrice(calcFreelance.clientPrice)" 
+                           @input="calcFreelance.clientPrice = $event.target.value.replace(/\D/g, '')" 
+                           placeholder="2.500.000" class="w-full calc-input-box px-4 py-2.5 text-xs text-white font-mono font-bold">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Skema Fee Freelancer</label>
+                        <select x-model="calcFreelance.feeMode" class="w-full calc-input-box px-3.5 py-2.5 text-xs text-white appearance-none cursor-pointer">
+                            <option value="percent">Bagi Hasil Persentase (%)</option>
+                            <option value="fixed">Nominal Flat Tetap (Rp)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">
+                            <span x-text="calcFreelance.feeMode === 'percent' ? 'Persentase Fee Freelancer (%)' : 'Nominal Fee Freelancer (Rp)'"></span>
+                        </label>
+                        <input type="text" x-model="calcFreelance.feeValue" 
+                               placeholder="40" class="w-full calc-input-box px-4 py-2.5 text-xs text-amber-300 font-mono font-bold">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Biaya Server AI &amp; Tools (Rp)</label>
+                        <input type="text" :value="formatInputPrice(calcFreelance.techCost)" 
+                               @input="calcFreelance.techCost = $event.target.value.replace(/\D/g, '')" 
+                               placeholder="50.000" class="w-full calc-input-box px-4 py-2 text-xs text-purple-300 font-mono font-bold">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1.5">Fee Payment Gateway (QRIS 0.7%)</label>
+                        <input type="text" readonly :value="formatRupiah(calcFreelanceResult.gatewayFee)" 
+                               class="w-full calc-input-box px-4 py-2 text-xs text-slate-400 font-mono bg-black/40">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 apollo-calc-panel p-6 space-y-4">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/10 pb-3">Hasil Bersih Masuk Kas Apollo</h4>
+            
+            <div class="space-y-3 font-mono text-xs">
+                <div class="flex justify-between text-slate-400">
+                    <span>Honor Penulis/Dev:</span>
+                    <span class="text-rose-400 font-bold" x-text="'- ' + formatRupiah(calcFreelanceResult.freelancerAmount)"></span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Biaya Operasional/Tools:</span>
+                    <span class="text-purple-300 font-bold" x-text="'- ' + formatRupiah(calcFreelance.techCost || 0)"></span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Fee Transaksi Gateway:</span>
+                    <span class="text-amber-300 font-bold" x-text="'- ' + formatRupiah(calcFreelanceResult.gatewayFee)"></span>
+                </div>
+                <div class="flex justify-between items-center pt-3 border-t border-white/10 text-white font-bold text-sm">
+                    <span class="font-sans text-xs uppercase tracking-wider">LABA BERSIH APOLLO:</span>
+                    <span class="text-xl text-emerald-400 font-black" x-text="formatRupiah(calcFreelanceResult.apolloNetProfit)"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<!-- ========================================================================= -->
             <!-- TAB 4: SYSTEM TOOLS -->
           <!-- REVISI TAB SYSTEM TOOLS & FORM BANNER ADS RESPONSIVE HP (ADMIN.HTML) -->
 <!-- TAB 4: SYSTEM TOOLS & ADS CONFIGURATION ADMIN APOLLO BRAND (ULTRA-PREMIUM CONTROL HUB) -->
@@ -4703,6 +6023,458 @@
 
 </div>
 <!-- ========================================================================= -->
+<!-- TAB: SURVEY DISPATCH ENGINE ADMIN APOLLO BRAND (EMERALD MATRIX) -->
+<!-- ========================================================================= -->
+<style>
+    /* CSS Khusus Survey Engine Admin Apollo */
+    .apollo-survey-panel {
+        background: linear-gradient(155deg, rgba(20, 15, 45, 0.65) 0%, rgba(5, 2, 18, 0.85) 100%);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(16, 185, 129, 0.4); /* Emerald Glow */
+        border-left: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 28px;
+        box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .survey-admin-card {
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.01) 100%);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 24px;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .survey-admin-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(16, 185, 129, 0.4);
+        box-shadow: 0 20px 45px -10px rgba(16, 185, 129, 0.2), 0 0 20px rgba(6, 182, 212, 0.1);
+    }
+
+    .survey-progress-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 999px;
+        height: 7px;
+        overflow: hidden;
+    }
+
+    .survey-progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+</style>
+
+<div x-show="currentTab === 'survey_engine' && !isLoadingData" x-cloak x-transition.opacity class="space-y-8">
+    
+    <!-- 1. HEADER SECTION & METRICS OVERVIEW -->
+    <div class="apollo-survey-panel p-6 sm:p-7 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase tracking-widest">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Apollo Respondent Gathering &bull; Dispatch Center
+            </div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
+                <i class="fa-solid fa-square-poll-vertical text-emerald-400 text-lg"></i>
+                <span>Manajemen Proyek Sebar Kuesioner</span>
+            </h3>
+            <p class="text-xs text-slate-400 font-light">Monitor pesanan responden kuesioner mahasiswa, perbarui progres pengisian secara *live*, dan verifikasi kelayakan sampel data penelitian.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button type="button" @click="fetchAdminSurveys()" 
+                    class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right text-emerald-400" :class="{'fa-spin': isUpdatingSurvey}"></i>
+                <span>Sync Data</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. KPI METRIC CARDS (SURVEY PERFORMANCE) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        
+        <!-- KPI 1: Proyek Aktif -->
+        <div class="survey-admin-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-list-check text-xs"></i>
+                <span>Proyek Berjalan</span>
+            </span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-emerald-400" 
+                x-text="activeSurveysCount + ' Proyek'"></h4>
+            <p class="text-[11px] text-slate-400">Kuesioner sedang dalam proses sebar</p>
+        </div>
+
+        <!-- KPI 2: Total Target Responden -->
+        <div class="survey-admin-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-cyan-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-users text-xs"></i>
+                <span>Akumulasi Target</span>
+            </span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-cyan-300" 
+                x-text="totalTargetRespondents.toLocaleString('id-ID') + ' Resp'"></h4>
+            <p class="text-[11px] text-slate-400">Total kuota responden dipesan klien</p>
+        </div>
+
+        <!-- KPI 3: Total Responden Terkumpul -->
+        <div class="survey-admin-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-purple-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-xs"></i>
+                <span>Responden Terisi</span>
+            </span>
+            <h4 class="text-2xl sm:text-3xl font-black font-mono text-purple-300" 
+                x-text="totalGatheredRespondents.toLocaleString('id-ID') + ' Terisi'"></h4>
+            <p class="text-[11px] text-slate-400">Data responden yang telah tervalidasi</p>
+        </div>
+
+        <!-- KPI 4: Total Omzet Survei -->
+        <div class="survey-admin-card p-5 space-y-1">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-vault text-xs"></i>
+                <span>Total Omzet Survei</span>
+            </span>
+            <h4 class="text-xl sm:text-2xl font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400" 
+                x-text="formatRupiah(totalSurveyRevenue)"></h4>
+            <p class="text-[11px] text-slate-400">Gross revenue layanan kuesioner</p>
+        </div>
+
+    </div>
+
+    <!-- 3. SEARCH & STATUS FILTER TOOLBAR -->
+    <div class="survey-admin-card p-5 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+        
+        <div class="relative flex-1 max-w-md">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+            <input x-model="surveySearch" 
+                   type="text" 
+                   placeholder="Cari ID Survei, Nama Klien, Topik Penelitian..." 
+                   class="w-full bg-slate-950/80 border border-white/10 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-400 transition font-sans">
+            <button x-show="surveySearch" @click="surveySearch = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="relative w-full sm:w-auto">
+                <select x-model="surveyStatusFilter" 
+                        class="w-full sm:w-auto bg-slate-950/90 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white appearance-none cursor-pointer pr-9 focus:border-emerald-400 focus:outline-none font-semibold">
+                    <option value="Semua" class="bg-slate-950 text-white">Semua Status</option>
+                    <option value="Menunggu Pembayaran" class="bg-slate-950 text-amber-400">Menunggu Pembayaran</option>
+                    <option value="Antrean Distribusi" class="bg-slate-950 text-pink-400">Antrean Distribusi</option>
+                    <option value="Proses Pengisian" class="bg-slate-950 text-cyan-400">Proses Pengisian</option>
+                    <option value="Validasi Data" class="bg-slate-950 text-purple-400">Validasi Data</option>
+                    <option value="Selesai" class="bg-slate-950 text-emerald-400">Selesai (Target Tercapai)</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+            </div>
+            
+            <span class="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-mono font-bold text-emerald-400 whitespace-nowrap"
+                  x-text="filteredSurveys.length + ' Proyek'"></span>
+        </div>
+
+    </div>
+
+    <!-- 4. SURVEY PROJECT BENTO GRID MATRIX -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8 items-stretch">
+        
+        <template x-for="item in filteredSurveys" :key="item.idSurvey">
+            <div class="survey-admin-card p-6 flex flex-col justify-between space-y-5 group">
+                
+                <!-- Top Card: ID, Tanggal & Status Dropdown -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="text-[10px] text-slate-500 font-mono" x-text="item.createdAt"></span>
+                        </div>
+                        <h4 class="text-base sm:text-lg font-mono font-bold text-white tracking-tight flex items-center gap-2">
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400" x-text="item.idSurvey"></span>
+                        </h4>
+                    </div>
+
+                    <!-- Quick Status Select Box -->
+                    <div class="relative shrink-0">
+                        <select :value="item.statusSurvey" 
+                                @change="updateSurveyStatus(item.idSurvey, $event.target.value)"
+                                class="bg-slate-950 border border-white/15 rounded-xl px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider appearance-none cursor-pointer pr-7 focus:outline-none focus:border-emerald-400 transition"
+                                :class="item.statusSurvey === 'Selesai' ? 'text-emerald-400 border-emerald-500/40 bg-emerald-950/20' : (item.statusSurvey === 'Proses Pengisian' ? 'text-cyan-300 border-cyan-500/40 bg-cyan-950/20' : 'text-amber-400 border-amber-500/40 bg-amber-950/20')">
+                            <option value="Menunggu Pembayaran">Menunggu Bayar</option>
+                            <option value="Antrean Distribusi">Antrean Sebar</option>
+                            <option value="Proses Pengisian">Proses Pengisian</option>
+                            <option value="Validasi Data">Validasi Data</option>
+                            <option value="Selesai">Selesai (Tuntas)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[8px] text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Client Info & Research Topic -->
+                <div class="space-y-3.5">
+                    
+                    <!-- Klien Contact Row -->
+                    <div class="flex items-center justify-between gap-3 text-xs bg-white/[0.02] p-3 rounded-2xl border border-white/5">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-600 flex items-center justify-center text-slate-950 font-bold text-xs shrink-0">
+                                <i class="fa-solid fa-user-graduate"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-white truncate" x-text="item.clientName"></p>
+                                <p class="text-[10px] text-slate-500 font-mono truncate" x-text="'User ID: ' + (item.idUser || 'GUEST')"></p>
+                            </div>
+                        </div>
+
+                        <!-- Direct WhatsApp Link -->
+                        <a :href="'https://wa.me/' + String(item.clientPhone).replace(/\D/g,'') + '?text=Halo%20' + encodeURIComponent(item.clientName) + ',%20update%20progres%20sebar%20kuesioner%20' + encodeURIComponent(item.idSurvey) + '...'" 
+                           target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 font-mono font-bold text-[11px] transition shrink-0 border border-emerald-500/20 shadow-sm">
+                            <i class="fa-brands fa-whatsapp text-sm"></i>
+                            <span x-text="item.clientPhone"></span>
+                        </a>
+                    </div>
+
+                    <!-- Research Topic Box -->
+                    <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[9px] uppercase tracking-widest text-slate-400 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-bookmark text-cyan-400 text-xs"></i>
+                                <span>Topik Riset / Judul Kuesioner:</span>
+                            </span>
+                            
+                            <!-- Direct Open Survey Button -->
+                            <a :href="item.surveyLink.startsWith('http') ? item.surveyLink : 'https://' + item.surveyLink" 
+                               target="_blank" rel="noopener noreferrer" 
+                               class="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-cyan-300 hover:text-cyan-200 transition">
+                                <span>Buka Form</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                            </a>
+                        </div>
+
+                        <p class="text-white font-medium leading-relaxed line-clamp-2" x-text="item.researchTopic"></p>
+
+                        <!-- Demographic Filter Tag -->
+                        <div class="pt-1.5 flex items-center gap-1.5 text-[11px] text-slate-400">
+                            <i class="fa-solid fa-filter text-purple-400 text-xs"></i>
+                            <span class="truncate" x-text="item.criteriaFilter || 'Random Sampling'"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 5. INTERACTIVE LIVE PROGRESS CONTROLLER (FITUR UTAMA ADMIN) -->
+                <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/20 via-slate-900/60 to-[#030014] border border-emerald-500/30 space-y-3">
+                    
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-[10px] uppercase tracking-widest font-bold text-emerald-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-chart-pie text-xs"></i>
+                            <span>Live Respondent Progress:</span>
+                        </span>
+                        
+                        <!-- Progress Stat -->
+                        <span class="font-mono font-bold text-white">
+                            <span class="text-emerald-400 text-sm" x-text="item.currentProgress"></span>
+                            <span class="text-slate-500">/</span>
+                            <span x-text="item.targetRespondents + ' Resp'"></span>
+                            <span class="text-[10px] text-cyan-400 font-normal ml-1" 
+                                  x-text="'(' + Math.min(100, Math.round((item.currentProgress / item.targetRespondents) * 100)) + '%)'"></span>
+                        </span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="survey-progress-track">
+                        <div class="survey-progress-bar bg-gradient-to-r from-emerald-400 via-cyan-400 to-purple-500" 
+                             :style="'width: ' + Math.min(100, Math.round((item.currentProgress / item.targetRespondents) * 100)) + '%'"></div>
+                    </div>
+
+                    <!-- Quick Progress Adjuster Stepper (Admin Real-Time Input) -->
+                    <div class="pt-2 flex items-center gap-2">
+                        <div class="relative flex-1">
+                            <input type="number" 
+                                   min="0" 
+                                   :max="item.targetRespondents" 
+                                   x-model.number="item.tempProgress" 
+                                   x-init="item.tempProgress = item.currentProgress"
+                                   placeholder="Update..." 
+                                   class="w-full bg-slate-950 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:border-emerald-400 focus:outline-none">
+                        </div>
+
+                        <!-- Quick Increment Buttons -->
+                        <button type="button" @click="item.tempProgress = Math.min(item.targetRespondents, (item.tempProgress || 0) + 10)" 
+                                class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-[10px] font-mono font-bold transition">+10</button>
+                        
+                        <button type="button" @click="item.tempProgress = Math.min(item.targetRespondents, (item.tempProgress || 0) + 50)" 
+                                class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 text-[10px] font-mono font-bold transition">+50</button>
+
+                        <button type="button" @click="item.tempProgress = item.targetRespondents" 
+                                class="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold transition">100%</button>
+
+                        <!-- Save Button -->
+                        <button type="button" 
+                                @click="saveSurveyProgress(item)" 
+                                class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition flex items-center gap-1 shadow-md">
+                            <i class="fa-solid fa-check text-xs"></i>
+                            <span>Save</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Footer Card: Total Biaya & Action Buttons -->
+                <div class="pt-4 border-t border-white/10 flex items-center justify-between gap-3 text-xs">
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Total Investasi</span>
+                        <p class="text-base font-black font-mono text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400" 
+                           x-text="formatRupiah(item.totalPrice)"></p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                                @click="openSurveyDetailModal(item)" 
+                                class="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition font-bold text-xs uppercase tracking-wider flex items-center gap-1.5"
+                                title="Lihat Rincian Lengkap">
+                            <i class="fa-solid fa-eye text-cyan-400"></i>
+                            <span>Detail</span>
+                        </button>
+
+                        <button type="button" 
+                                @click="deleteSurveyItem(item.idSurvey)" 
+                                class="w-9 h-9 rounded-xl bg-rose-500/10 hover:bg-rose-500 border border-rose-500/30 text-rose-400 hover:text-white transition flex items-center justify-center text-xs"
+                                title="Hapus Proyek Survei">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </template>
+
+    </div>
+
+    <!-- Empty State -->
+    <div x-show="filteredSurveys.length === 0" 
+         class="apollo-survey-panel py-16 px-6 text-center border-dashed max-w-xl mx-auto space-y-3">
+        <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-emerald-400 text-2xl mx-auto shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+            <i class="fa-solid fa-square-poll-vertical"></i>
+        </div>
+        <h4 class="text-base font-bold text-white">Tidak Ada Proyek Kuesioner Ditemukan</h4>
+        <p class="text-xs text-slate-400 font-light max-w-sm mx-auto">
+            Belum ada pesanan sebar responden yang cocok dengan kriteria pencarian atau filter status Anda.
+        </p>
+    </div>
+
+    <!-- 5. MODAL DETAIL PROYEK SURVEI (AUDIT & SPECIFICATION MODAL) -->
+  <!-- ========================================================================= -->
+    <!-- 5. MODAL DETAIL PROYEK SURVEI (FIX ANTI-NULL ERROR & x-if WRAPPER) -->
+    <!-- ========================================================================= -->
+    <div x-show="surveyDetailModalOpen" class="relative z-[120]" x-cloak>
+        <div x-show="surveyDetailModalOpen" 
+             x-transition.opacity 
+             class="fixed inset-0 bg-[#030014]/85 backdrop-blur-2xl" 
+             @click="surveyDetailModalOpen = false"></div>
+        
+        <div class="fixed inset-0 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+            <div x-show="surveyDetailModalOpen" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                 class="apollo-product-modal w-full max-w-2xl relative overflow-hidden my-auto shadow-2xl">
+                
+                <!-- 👇 KUNCI FIX: BUNGKUS DENGAN x-if AGAR TIDAK DI-RENDER SAAT NULL 👇 -->
+                <template x-if="selectedSurvey">
+                    <div>
+                        
+                        <!-- Modal Header -->
+                        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/[0.02]">
+                            <div class="space-y-0.5">
+                                <span class="text-[9px] text-emerald-400 font-mono font-bold uppercase tracking-wider block">Survey Project Specification</span>
+                                <h3 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                                    <span>Detail Proyek:</span>
+                                    <span class="font-mono text-cyan-300" x-text="selectedSurvey.idSurvey"></span>
+                                </h3>
+                            </div>
+                            
+                            <button type="button" 
+                                    @click.stop="surveyDetailModalOpen = false" 
+                                    class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white flex items-center justify-center transition shadow-md cursor-pointer"
+                                    title="Tutup">
+                                <i class="fa-solid fa-xmark text-sm pointer-events-none"></i>
+                            </button>
+                        </div>
+
+                        <!-- Modal Body -->
+                        <div class="p-6 sm:p-8 space-y-5 max-h-[72vh] overflow-y-auto text-xs">
+                            
+                            <!-- Klien & Status Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
+                                    <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Informasi Klien</span>
+                                    <p class="text-sm font-bold text-white" x-text="selectedSurvey.clientName"></p>
+                                    <p class="text-emerald-400 font-mono text-xs" x-text="selectedSurvey.clientPhone"></p>
+                                    <p class="text-[10px] text-slate-500 font-mono" x-text="'User ID: ' + (selectedSurvey.idUser || 'GUEST')"></p>
+                                </div>
+
+                                <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
+                                    <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold block">Status &amp; Waktu</span>
+                                    <p class="text-sm font-bold text-emerald-400" x-text="selectedSurvey.statusSurvey"></p>
+                                    <p class="text-slate-400 font-mono text-[10px]" x-text="formatDateTime(selectedSurvey.createdAt)"></p>
+                                    <p class="text-base font-black font-mono text-white" x-text="formatRupiah(selectedSurvey.totalPrice)"></p>
+                                </div>
+                            </div>
+
+                            <!-- Topik & Link Form -->
+                            <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+                                <span class="text-[10px] uppercase tracking-widest text-cyan-400 font-bold block">Topik Penelitian:</span>
+                                <p class="text-white font-semibold leading-relaxed" x-text="selectedSurvey.researchTopic"></p>
+                                
+                                <div class="pt-2 border-t border-white/5 flex items-center justify-between">
+                                    <span class="text-[10px] text-slate-400 font-mono">Tautan Kuesioner:</span>
+                                    <a :href="selectedSurvey.surveyLink && selectedSurvey.surveyLink.startsWith('http') ? selectedSurvey.surveyLink : 'https://' + (selectedSurvey.surveyLink || '')" 
+                                       target="_blank" rel="noopener noreferrer" 
+                                       class="text-xs font-mono font-bold text-cyan-400 hover:underline flex items-center gap-1">
+                                        <span>Buka Google Form / Qualtrics</span>
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Kriteria Filter Demografi -->
+                            <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1.5">
+                                <span class="text-[10px] uppercase tracking-widest text-purple-400 font-bold block">Kriteria Penyaringan &amp; Screening:</span>
+                                <p class="text-slate-200 font-medium leading-relaxed" x-text="selectedSurvey.criteriaFilter || 'Random Sampling'"></p>
+                            </div>
+
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="p-5 border-t border-white/10 bg-white/[0.02] flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-500">Database Entry Verified &bull; Real-time Matrix</span>
+                            <button type="button" 
+                                    @click="surveyDetailModalOpen = false" 
+                                    class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition">
+                                Tutup
+                            </button>
+                        </div>
+
+                    </div>
+                </template>
+                <!-- 👆 BATAS AKHIR x-if 👆 -->
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- ========================================================================= -->
 <!-- ========================================================================= -->
 <!-- ========================================================================= -->
@@ -5117,6 +6889,31 @@
 
     <!-- SYSTEM LOGIC -->
     <script>
+        // =========================================================================
+// GLOBAL HELPER PEMFORMAT WAKTU (ANTI-UNDEFINED)
+// =========================================================================
+window.formatDateTime = function(val) {
+    if (!val) return '-';
+    try {
+        // Jika sudah berupa format teks rapi tanpa karakter ISO T/Z
+        if (typeof val === 'string' && !val.includes('T') && !val.includes('Z')) {
+            return val;
+        }
+        const d = new Date(val);
+        if (isNaN(d.getTime())) return String(val);
+
+        const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = months[d.getMonth()];
+        const year = d.getFullYear();
+        const h = String(d.getHours()).padStart(2, '0');
+        const m = String(d.getMinutes()).padStart(2, '0');
+
+        return `${day} ${month} ${year}, ${h}:${m} WIB`;
+    } catch (e) {
+        return String(val);
+    }
+};
         // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtgsLC2yxmzN-MDIPz6xZKVD7pZLtcgzLotQ69Y7-3b5_RZlNfGKuGShXJk1Hy5t04FQ/exec"; 
 
@@ -5166,6 +6963,13 @@ function adminApp() {
         scannerModalOpen: false,
         selectedBarcodeProduct: {},
         html5Qrcode: null,
+        // --- SURVEY DISPATCH ADMIN STATES ---
+        surveyProjects: [],
+        surveySearch: '',
+        surveyStatusFilter: 'Semua',
+        selectedSurvey: null,
+        surveyDetailModalOpen: false,
+        isUpdatingSurvey: false,
 
         // --- BACKEND DATA STORES ---
         orders: [],
@@ -5192,6 +6996,22 @@ function adminApp() {
             fitur: '',
             deskripsi: '',
             gambar: ''
+        },
+        // --- FINANCE ANALYSIS & PROFIT MARGIN STATES ---
+        expensesList: [],
+        expenseModalOpen: false,
+        expenseFormMode: 'add', // 'add' atau 'edit'
+        isSavingExpense: false,
+        expenseSearch: '',
+        expenseCategoryFilter: 'Semua',
+        expenseForm: {
+            idExpense: '',
+            title: '',
+            category: 'Server & AI',
+            expenseType: 'OPEX',
+            amount: 0,
+            date: '',
+            notes: ''
         },
          // --- INVOICE & NOTA STATES ---
         selectedInvoice: null,
@@ -5254,6 +7074,252 @@ function adminApp() {
         isAdminAuthenticated: false,
         adminPasscode: '',
         isValidatingAdmin: false,
+        // =================================================================
+        // ENTERPRISE CALCULATOR SUITE STATES & LOGIC (5 SUB-MODUL)
+        // =================================================================
+        calcSubTab: 'academic_web', // 'academic_web', 'discount_margin', 'survey_slovin', 'installment_term', 'freelance_cogs'
+
+        // 1. STATE ESTIMATOR AKADEMIK & WEB
+        calcAcademic: {
+            serviceType: 'skripsi_full',
+            level: 'd3_s1',
+            variables: 3,
+            sla: 'standard',
+            addonOlahData: false,
+            addonTurnitin: false,
+            addonPPT: false,
+            addonZoom: false,
+            get slaLabel() {
+                if (this.sla === 'rush') return 'Super Rush (2-3 Hari)';
+                if (this.sla === 'express') return 'Express (5-7 Hari)';
+                return 'Reguler (10-14 Hari)';
+            }
+        },
+
+        resetAcademicCalc() {
+            this.calcAcademic = {
+                serviceType: 'skripsi_full',
+                level: 'd3_s1',
+                variables: 3,
+                sla: 'standard',
+                addonOlahData: false,
+                addonTurnitin: false,
+                addonPPT: false,
+                addonZoom: false
+            };
+        },
+
+        get calcAcademicTotal() {
+            const basePrices = {
+                'skripsi_full': 1500000,
+                'skripsi_partial': 850000,
+                'tesis_s2': 3500000,
+                'jurnal_sinta': 850000,
+                'olah_data': 450000,
+                'web_landing': 800000,
+                'web_fullstack': 2500000,
+                'web_saas': 4500000
+            };
+
+            let base = basePrices[this.calcAcademic.serviceType] || 1000000;
+            if (this.calcAcademic.level === 's2_magister') base *= 1.4;
+
+            // Tambahan Variabel (> 3 variabel = +75k per variabel)
+            let varAddon = Math.max(0, (this.calcAcademic.variables - 3) * 75000);
+
+            // Addon Layanan
+            let extra = 0;
+            if (this.calcAcademic.addonOlahData) extra += 400000;
+            if (this.calcAcademic.addonTurnitin) extra += 100000;
+            if (this.calcAcademic.addonPPT) extra += 150000;
+            if (this.calcAcademic.addonZoom) extra += 200000;
+
+            // SLA Multiplier
+            let subtotalBeforeSla = base + varAddon + extra;
+            let slaAddon = 0;
+            if (this.calcAcademic.sla === 'express') slaAddon = subtotalBeforeSla * 0.20;
+            if (this.calcAcademic.sla === 'rush') slaAddon = subtotalBeforeSla * 0.40;
+
+            let finalPrice = Math.round(subtotalBeforeSla + slaAddon);
+
+            return {
+                basePrice: Math.round(base),
+                variableAddon: varAddon,
+                extraAddons: extra,
+                slaAddon: Math.round(slaAddon),
+                finalPrice: finalPrice
+            };
+        },
+
+        copyAcademicQuotation() {
+            const t = this.calcAcademicTotal;
+            const text = 
+`*ESTIMASI PENAWARAN RESMI - APOLLO BRAND*
+==================================
+📚 *Kategori Layanan:* ${this.calcAcademic.serviceType.toUpperCase().replace(/_/g, ' ')}
+🎯 *Tingkat/Jenjang:* ${this.calcAcademic.level.toUpperCase()}
+📊 *Variabel Riset:* ${this.calcAcademic.variables} Variabel
+⏰ *Target SLA:* ${this.calcAcademic.sla.toUpperCase()}
+==================================
+*RINCIAN ESTIMASI BIAYA:*
+• Biaya Pokok: ${this.formatRupiah(t.basePrice)}
+${t.variableAddon > 0 ? `• Add-on Variabel: +${this.formatRupiah(t.variableAddon)}\n` : ''}${t.slaAddon > 0 ? `• Prioritas SLA: +${this.formatRupiah(t.slaAddon)}\n` : ''}${t.extraAddons > 0 ? `• Layanan Tambahan: +${this.formatRupiah(t.extraAddons)}\n` : ''}----------------------------------
+*TOTAL INVESTASI: ${this.formatRupiah(t.finalPrice)}*
+==================================
+_Include: Garansi Revisi Tuntas & Kerahasiaan Penuh (NDA)._
+Silakan konfirmasi untuk mulai penjadwalan pengerjaan.`;
+
+            navigator.clipboard.writeText(text);
+            alert("📋 Format Quotation Penawaran WA berhasil disalin ke Clipboard!");
+        },
+
+        // 2. STATE DISKON & MARGIN
+        calcDiscount: {
+            originalPrice: 2000000,
+            percent: 15,
+            nominal: 0,
+            cogs: 800000
+        },
+
+        get calcDiscountResult() {
+            const orig = Number(this.calcDiscount.originalPrice) || 0;
+            const pct = Number(this.calcDiscount.percent) || 0;
+            const nom = Number(this.calcDiscount.nominal) || 0;
+            const cogs = Number(this.calcDiscount.cogs) || 0;
+
+            const pctDiscount = orig * (pct / 100);
+            const totalDisc = pctDiscount + nom;
+            const finalP = Math.max(0, orig - totalDisc);
+            const net = finalP - cogs;
+            const margin = finalP > 0 ? ((net / finalP) * 100).toFixed(1) : 0;
+
+            return {
+                discountValue: Math.round(totalDisc),
+                finalPrice: Math.round(finalP),
+                netProfit: Math.round(net),
+                marginPct: margin
+            };
+        },
+
+        // 3. STATE SLOVIN SAMPLING
+        calcSlovin: {
+            population: 1000,
+            errorMargin: 0.05,
+            filterType: 'none'
+        },
+
+        get calcSlovinResult() {
+            const N = Number(this.calcSlovin.population) || 100;
+            const e = Number(this.calcSlovin.errorMargin) || 0.05;
+            
+            // Rumus Slovin: n = N / (1 + N * e^2)
+            const n = Math.ceil(N / (1 + (N * Math.pow(e, 2))));
+            const rounded = Math.ceil(n / 200) * 200;
+
+            let cost = (rounded / 200) * 40000;
+            if (this.calcSlovin.filterType === 'light') cost += (rounded / 200) * 10000;
+            if (this.calcSlovin.filterType === 'strict') cost += (rounded / 200) * 25000;
+
+            return {
+                sampleSize: n,
+                roundedPackage: rounded,
+                totalCost: Math.round(cost)
+            };
+        },
+
+        copySlovinSummary() {
+            const r = this.calcSlovinResult;
+            const text = 
+`*HASIL KALKULASI RUMUS SLOVIN - APOLLO BRAND*
+==================================
+👥 *Total Populasi (N):* ${this.calcSlovin.population.toLocaleString('id-ID')}
+🎯 *Margin Error (e):* ${(this.calcSlovin.errorMargin * 100)}%
+📊 *Ukuran Sampel Ilmiah (n):* ${r.sampleSize} Responden
+📦 *Dibulatkan ke Paket:* ${r.roundedPackage} Responden
+----------------------------------
+*ESTIMASI BIAYA SEBAR:* ${this.formatRupiah(r.totalCost)}
+==================================
+_Data 100% unik & siap diolah ke SPSS/SmartPLS._`;
+
+            navigator.clipboard.writeText(text);
+            alert("📋 Hasil perhitungan Slovin berhasil disalin!");
+        },
+
+        // 4. STATE TERMIN & CICILAN
+        calcTerm: {
+            totalProject: 3000000,
+            scheme: '3_step'
+        },
+
+        get calcTermMilestones() {
+            const total = Number(this.calcTerm.totalProject) || 0;
+            if (this.calcTerm.scheme === '2_step') {
+                return [
+                    { label: 'Termin 1: Down Payment (DP)', pct: 50, amount: Math.round(total * 0.5) },
+                    { label: 'Termin 2: Finalisasi & Pelunasan', pct: 50, amount: Math.round(total * 0.5) }
+                ];
+            }
+            if (this.calcTerm.scheme === '4_step') {
+                return [
+                    { label: 'Termin 1: Down Payment (DP Awal)', pct: 30, amount: Math.round(total * 0.3) },
+                    { label: 'Termin 2: Pengerjaan Bab 1 - 3', pct: 30, amount: Math.round(total * 0.3) },
+                    { label: 'Termin 3: Olah Data & Bab 4 - 5', pct: 30, amount: Math.round(total * 0.3) },
+                    { label: 'Termin 4: Pelunasan & Uji Turnitin', pct: 10, amount: Math.round(total * 0.1) }
+                ];
+            }
+            // Default 3 step
+            return [
+                { label: 'Termin 1: Down Payment (DP)', pct: 40, amount: Math.round(total * 0.4) },
+                { label: 'Termin 2: Progres Pengerjaan Bab 1-3', pct: 30, amount: Math.round(total * 0.3) },
+                { label: 'Termin 3: Finalisasi, Olah Data & Pelunasan', pct: 30, amount: Math.round(total * 0.3) }
+            ];
+        },
+
+        copyTermSchedule() {
+            const milestones = this.calcTermMilestones.map((m, i) => `${i + 1}. *${m.label}:* ${this.formatRupiah(m.amount)} (${m.pct}%)`).join('\n');
+            const text = 
+`*JADWAL SKEMA TERMIN PEMBAYARAN - APOLLO BRAND*
+==================================
+💰 *Total Nilai Proyek:* ${this.formatRupiah(this.calcTerm.totalProject)}
+==================================
+*RINCIAN MILESTONE PEMBAYARAN:*
+${milestones}
+==================================
+Pembayaran dapat dilakukan bertahap sesuai progres pengerjaan bab/tahapan.`;
+
+            navigator.clipboard.writeText(text);
+            alert("📋 Draf jadwal termin berhasil disalin!");
+        },
+
+        // 5. STATE FREELANCE COGS & NET PROFIT
+        calcFreelance: {
+            clientPrice: 2500000,
+            feeMode: 'percent',
+            feeValue: 40,
+            techCost: 50000
+        },
+
+        get calcFreelanceResult() {
+            const price = Number(this.calcFreelance.clientPrice) || 0;
+            const feeVal = Number(this.calcFreelance.feeValue) || 0;
+            const tech = Number(this.calcFreelance.techCost) || 0;
+
+            let freelancePay = 0;
+            if (this.calcFreelance.feeMode === 'percent') {
+                freelancePay = price * (feeVal / 100);
+            } else {
+                freelancePay = feeVal;
+            }
+
+            const gatewayFee = price > 0 ? (price * 0.007) + 2500 : 0;
+            const netApollo = price - (freelancePay + tech + gatewayFee);
+
+            return {
+                freelancerAmount: Math.round(freelancePay),
+                gatewayFee: Math.round(gatewayFee),
+                apolloNetProfit: Math.round(netApollo)
+            };
+        },
         
         // HASH DARI PASSWORD ADMIN (Contoh: Hash dari kata "ApolloAdmin2026!")
         // Jangan simpan password plain text di frontend. Gunakan hash SHA256.
@@ -5321,10 +7387,17 @@ async verifyAdminAccess() {
                 }
             }, 60000);
         },
+        // Masukkan di dalam return { ... } pada adminApp()
+        formatDateTime(val) {
+            return window.formatDateTime(val);
+        },
 
 // GANTI fungsi loadAllData() lama dengan versi INSTANT LOAD ini:
-        async loadAllData() {
-            // 1. INSTANT RENDER DARI LOCAL STORAGE (0 Detik)
+   // =================================================================
+        // MASTER BOOTSTRAP LOADER ADMIN (INSTANT SWR CACHE + PARALLEL SYNC)
+        // =================================================================
+      async loadAllData() {
+            // SWR: Muat dari memori browser di awal
             const cachedAdmin = localStorage.getItem('apollo_admin_bootstrap_cache');
             if (cachedAdmin) {
                 try {
@@ -5334,40 +7407,99 @@ async verifyAdminAccess() {
                     this.adminProducts = parsed.products || [];
                     this.adminPackages = parsed.packages || [];
                     this.adsForm = parsed.settings || this.adsForm;
+                    this.surveyProjects = parsed.surveys || [];
+                    this.coinUsers = parsed.coinUsers || [];
+                    this.coinLogs = parsed.coinLogs || [];
+
+                    if (this.orders.length > 0 && !this.lastKnownOrderId) {
+                        this.lastKnownOrderId = this.orders[0].idTransaksi;
+                    }
+
                     this.isLoadingData = false;
 
                     if (this.currentTab === 'dashboard') {
                         this.$nextTick(() => { this.renderCharts(); });
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.error("Gagal membaca cache lokal:", e);
+                }
             } else {
                 this.isLoadingData = true;
             }
 
-            // 2. SATU REQUEST TUNGGAL UNTUK SEMUA DATA
+            // Panggilan API Simpel (Bebas Header CORS)
             try {
-                const res = await fetch(`${SCRIPT_URL}?action=get_admin_bootstrap`);
-                const json = await res.json();
+                const [bootstrapRes, surveyRes, coinRes] = await Promise.all([
+                    fetch(`${SCRIPT_URL}?action=get_admin_bootstrap&_t=${Date.now()}`),
+                    fetch(`${SCRIPT_URL}?action=get_admin_surveys&_t=${Date.now()}`),
+                    fetch(`${SCRIPT_URL}?action=get_coin_admin_data&_t=${Date.now()}`)
+                ]);
 
-                if (json.status === 'success' && json.data) {
-                    const d = json.data;
+                const [bootstrapJson, surveyJson, coinJson] = await Promise.all([
+                    bootstrapRes.ok ? bootstrapRes.json() : { status: 'error' },
+                    surveyRes.ok ? surveyRes.json() : { status: 'error' },
+                    coinRes.ok ? coinRes.json() : { status: 'error' }
+                ]);
+
+                if (bootstrapJson.status === 'success' && bootstrapJson.data) {
+                    const d = bootstrapJson.data;
                     this.analyticsData = d.analytics || this.analyticsData;
                     this.orders = d.orders || [];
                     this.adminProducts = d.products || [];
                     this.adminPackages = d.packages || [];
                     this.adsForm = d.settings || this.adsForm;
 
-                    // Simpan cache lokal admin
-                    localStorage.setItem('apollo_admin_bootstrap_cache', JSON.stringify(d));
-
-                    if (this.currentTab === 'dashboard') {
-                        this.$nextTick(() => { this.renderCharts(); });
+                    if (this.orders.length > 0) {
+                        this.lastKnownOrderId = this.orders[0].idTransaksi;
                     }
                 }
+
+                if (surveyJson.status === 'success' && Array.isArray(surveyJson.data)) {
+                    this.surveyProjects = [...surveyJson.data];
+                }
+
+                if (coinJson.status === 'success' && coinJson.data) {
+                    this.coinUsers = coinJson.data.users || [];
+                    this.coinLogs = coinJson.data.logs || [];
+                }
+
+                const unifiedAdminCache = {
+                    analytics: this.analyticsData,
+                    orders: this.orders,
+                    products: this.adminProducts,
+                    packages: this.adminPackages,
+                    settings: this.adsForm,
+                    surveys: this.surveyProjects,
+                    coinUsers: this.coinUsers,
+                    coinLogs: this.coinLogs
+                };
+                localStorage.setItem('apollo_admin_bootstrap_cache', JSON.stringify(unifiedAdminCache));
+
+                if (this.currentTab === 'dashboard') {
+                    this.$nextTick(() => { this.renderCharts(); });
+                }
+
             } catch (e) {
-                console.error("Gagal fetch data admin:", e);
+                console.error("Gagal sinkronisasi data admin:", e);
             } finally {
                 this.isLoadingData = false;
+            }
+        },
+
+        // =================================================================
+        // 3. REVISI: fetchAdminSurveys (SIMPLE FETCH)
+        // =================================================================
+        async fetchAdminSurveys() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get_admin_surveys&_t=${Date.now()}`);
+                const json = await res.json();
+                
+                if (json.status === 'success' && Array.isArray(json.data)) {
+                    this.surveyProjects = [...json.data];
+                    localStorage.setItem('apollo_admin_surveys_cache', JSON.stringify(this.surveyProjects));
+                }
+            } catch (err) {
+                console.error("Gagal sync data survei:", err);
             }
         },
         async refreshData() {
@@ -5408,22 +7540,15 @@ async verifyAdminAccess() {
         },
 
         // 2. Mesin Pengecek Pesanan Baru ke Google Sheets (Anti-Cache)
-        async checkIncomingDataAuto() {
-            // Hindari tabrakan request jika sedang mengambil data
+              async checkIncomingDataAuto() {
             if (this.isAutoSyncing || !this.isAdminAuthenticated) return;
             this.isAutoSyncing = true;
 
             try {
-                // 👇 KUNCI RAHASIA: Tambahkan &_t=${Date.now()} dan cache: 'no-store' 
-                // agar browser DIPAKSA mengambil data paling baru langsung dari Google Sheets!
-                const res = await fetch(`${SCRIPT_URL}?action=get_orders&_t=${Date.now()}`, {
-                    method: 'GET',
-                    cache: 'no-store',
-                    headers: {
-                        'Pragma': 'no-cache',
-                        'Cache-Control': 'no-cache'
-                    }
-                });
+                // Gunakan Simple GET request dengan parameter timestamp _t (Bebas CORS Preflight)
+                const res = await fetch(`${SCRIPT_URL}?action=get_orders&_t=${Date.now()}`);
+
+                if (!res.ok) throw new Error("Gagal sync pesanan");
 
                 const json = await res.json();
 
@@ -5433,11 +7558,9 @@ async verifyAdminAccess() {
                     if (latestOrders.length > 0) {
                         const topOrder = latestOrders[0];
 
-                        // DETEKSI PESANAN BARU:
-                        // Jika ada pesanan baru yang ID-nya berbeda dari data sebelumnya
+                        // DETEKSI PESANAN BARU
                         if (this.lastKnownOrderId && topOrder.idTransaksi !== this.lastKnownOrderId) {
                             
-                            // A. Munculkan Toast Notifikasi di Layar
                             this.newOrderToastData = {
                                 id: topOrder.idTransaksi,
                                 name: topOrder.customerName || 'Klien Baru',
@@ -5449,26 +7572,32 @@ async verifyAdminAccess() {
                                 this.showNewOrderToast = false;
                             }, 7000);
 
-                            // B. Bunyikan Lonceng Notifikasi (Diproteksi agar tidak crash)
                             try {
                                 this.playChimeSound();
                             } catch (audioErr) {}
 
-                            // C. Update Analitik & Grafik secara otomatis
                             this.fetchAnalytics();
                         }
 
-                        // 👇 PERBARUI ARRAY REAKTIF: Membuat Alpine langsung me-render kartu pesanan baru!
                         this.orders = [...latestOrders];
                         this.lastKnownOrderId = topOrder.idTransaksi;
+                    } else {
+                        this.orders = [];
                     }
                 }
+
+                // Sinkronkan tab survei jika sedang dibuka
+                if (this.currentTab === 'survey_engine') {
+                    await this.fetchAdminSurveys();
+                }
+
             } catch (err) {
-                // Silent fail agar console tetap bersih
+                // Silent fail di background
             } finally {
                 this.isAutoSyncing = false;
             }
         },
+  
         // 3. Audio Chime Synthesizer (Tanpa File Eksternal - 100% Anti Error 404)
         playChimeSound() {
             try {
@@ -5837,11 +7966,16 @@ async verifyAdminAccess() {
             if (tab === 'dashboard') {
                 this.$nextTick(() => { this.renderCharts(); });
             }
+            if (tab === 'finance_analysis') {
+                this.fetchFinanceData();
+            }
              // Inisialisasi Tab Control Coin
             if (tab === 'coins') {
                 this.fetchCoinAdminData();
             }
-            
+            if (tab === 'survey_engine') {
+                this.fetchAdminSurveys();
+            }
             // Auto-select transaksi pertama jika membuka tab nota
             if (tab === 'invoices' && !this.selectedInvoice && this.orders && this.orders.length > 0) {
                 this.selectedInvoice = this.orders[0];
@@ -5851,6 +7985,385 @@ async verifyAdminAccess() {
                     this.fetchCustomerAnalysis();
                 });
             }
+        },
+        // =================================================================
+        // SURVEY DISPATCH ENGINE ADMIN CONTROLLER
+        // =================================================================
+
+      
+
+
+        get filteredSurveys() {
+            let list = this.surveyProjects || [];
+
+            // Filter Status
+            if (this.surveyStatusFilter !== 'Semua') {
+                list = list.filter(s => s.statusSurvey === this.surveyStatusFilter);
+            }
+
+            // Filter Search (ID, Nama Klien, Topik, Filter Kriteria)
+            if (this.surveySearch.trim() !== '') {
+                const q = this.surveySearch.toLowerCase().trim();
+                list = list.filter(s => 
+                    String(s.idSurvey || '').toLowerCase().includes(q) ||
+                    String(s.clientName || '').toLowerCase().includes(q) ||
+                    String(s.researchTopic || '').toLowerCase().includes(q) ||
+                    String(s.criteriaFilter || '').toLowerCase().includes(q) ||
+                    String(s.clientPhone || '').toLowerCase().includes(q)
+                );
+            }
+
+            return list;
+        },
+
+        get activeSurveysCount() {
+            return (this.surveyProjects || []).filter(s => s.statusSurvey !== 'Selesai').length;
+        },
+
+        get totalTargetRespondents() {
+            return (this.surveyProjects || []).reduce((sum, s) => sum + (Number(s.targetRespondents) || 0), 0);
+        },
+
+        get totalGatheredRespondents() {
+            return (this.surveyProjects || []).reduce((sum, s) => sum + (Number(s.currentProgress) || 0), 0);
+        },
+
+        get totalSurveyRevenue() {
+            return (this.surveyProjects || []).reduce((sum, s) => sum + (Number(s.totalPrice) || 0), 0);
+        },
+
+        // Update Progress Responden Secara Live
+        async saveSurveyProgress(item) {
+            const newProgress = Math.max(0, Math.min(item.targetRespondents, Number(item.tempProgress) || 0));
+
+            const payload = new URLSearchParams({
+                action: 'update_survey_progress',
+                idSurvey: item.idSurvey,
+                currentProgress: String(newProgress)
+            });
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: payload });
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    item.currentProgress = newProgress;
+                    alert(`✅ Progres responden proyek ${item.idSurvey} berhasil diupdate: ${newProgress}/${item.targetRespondents} Responden.`);
+                } else {
+                    alert("❌ Gagal update progres: " + json.message);
+                }
+            } catch (e) {
+                alert("Gagal koneksi ke server database.");
+            }
+        },
+
+        // Update Status Proyek (Otomatis cairkan reward koin jika status = Selesai)
+        async updateSurveyStatus(idSurvey, newStatus) {
+            const payload = new URLSearchParams({
+                action: 'update_survey_status',
+                idSurvey: idSurvey,
+                statusSurvey: newStatus
+            });
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: payload });
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    const found = this.surveyProjects.find(s => s.idSurvey === idSurvey);
+                    if (found) found.statusSurvey = newStatus;
+                    alert(`✅ Status proyek ${idSurvey} berhasil diubah menjadi: ${newStatus}`);
+                } else {
+                    alert("❌ Gagal: " + json.message);
+                }
+            } catch (e) {
+                alert("Gagal update status proyek.");
+            }
+        },
+
+        openSurveyDetailModal(survey) {
+            this.selectedSurvey = survey;
+            this.surveyDetailModalOpen = true;
+        },
+
+        async deleteSurveyItem(idSurvey) {
+            if (!confirm(`Hapus proyek survei dengan ID: ${idSurvey}? Tindakan ini permanen.`)) return;
+
+            const payload = new URLSearchParams({
+                action: 'delete_survey_project',
+                idSurvey: idSurvey
+            });
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: payload });
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    alert("✅ Proyek survei berhasil dihapus.");
+                    await this.fetchAdminSurveys();
+                } else {
+                    alert("❌ Gagal menghapus: " + json.message);
+                }
+            } catch (e) {
+                alert("Gagal menghubungi server.");
+            }
+        },
+        // =================================================================
+        // FINANCIAL CASHFLOW & PROFIT MARGIN CONTROLLER
+        // =================================================================
+
+        // 1. Ambil data pengeluaran dari Backend (Bypass Cache)
+        async fetchFinanceData() {
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=get_finance_data&_t=${Date.now()}`);
+                const json = await res.json();
+                if (json.status === 'success' && Array.isArray(json.data)) {
+                    this.expensesList = json.data;
+                    this.$nextTick(() => {
+                        this.renderFinanceCharts();
+                    });
+                }
+            } catch (err) {
+                console.error("Gagal memuat data keuangan:", err);
+            }
+        },
+
+        // 2. Kalkulasi Ringkasan Laba Rugi Eksekutif
+        get financialSummary() {
+            // Gross Revenue dari pesanan yang sukses/selesai
+            const grossRev = (this.orders || [])
+                .filter(o => o.statusPesanan === 'Selesai')
+                .reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+
+            const totalExp = (this.expensesList || []).reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+            
+            const cogs = (this.expensesList || [])
+                .filter(e => e.expenseType === 'COGS')
+                .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+            const opex = (this.expensesList || [])
+                .filter(e => e.expenseType === 'OPEX')
+                .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+            const netProf = grossRev - totalExp;
+            const marginPct = grossRev > 0 ? ((netProf / grossRev) * 100).toFixed(1) : 0;
+
+            const techFees = (this.expensesList || [])
+                .filter(e => e.category === 'Server & AI' || e.category === 'Fee Gateway / Bank' || e.category === 'Cloud Hosting & Domain')
+                .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+            return {
+                grossRevenue: grossRev,
+                totalExpenses: totalExp,
+                totalCogs: cogs,
+                totalOpex: opex,
+                netProfit: netProf,
+                netProfitMargin: marginPct,
+                techAndGatewayFees: techFees
+            };
+        },
+
+        // 3. Filter Tabel Pengeluaran
+        get filteredExpenses() {
+            let list = this.expensesList || [];
+
+            if (this.expenseCategoryFilter !== 'Semua') {
+                list = list.filter(e => e.category === this.expenseCategoryFilter);
+            }
+
+            if (this.expenseSearch.trim() !== '') {
+                const q = this.expenseSearch.toLowerCase().trim();
+                list = list.filter(e => 
+                    String(e.idExpense || '').toLowerCase().includes(q) ||
+                    String(e.title || '').toLowerCase().includes(q) ||
+                    String(e.category || '').toLowerCase().includes(q) ||
+                    String(e.notes || '').toLowerCase().includes(q)
+                );
+            }
+
+            return list;
+        },
+
+        // 4. Modal Handlers
+        openAddExpenseModal() {
+            this.expenseFormMode = 'add';
+            this.expenseForm = {
+                idExpense: '',
+                title: '',
+                category: 'Server & AI',
+                expenseType: 'OPEX',
+                amount: '',
+                date: new Date().toISOString().slice(0, 10),
+                notes: ''
+            };
+            this.expenseModalOpen = true;
+        },
+
+        openEditExpenseModal(item) {
+            this.expenseFormMode = 'edit';
+            this.expenseForm = { ...item };
+            this.expenseModalOpen = true;
+        },
+
+        async saveExpenseSubmit() {
+            if (!this.expenseForm.title || !this.expenseForm.amount || !this.expenseForm.date) {
+                alert("Uraian Biaya, Nominal, dan Tanggal wajib diisi!");
+                return;
+            }
+
+            this.isSavingExpense = true;
+            const action = this.expenseFormMode === 'add' ? 'add_expense' : 'update_expense';
+
+            const payload = new URLSearchParams({
+                action: action,
+                idExpense: this.expenseForm.idExpense || '',
+                title: this.expenseForm.title,
+                category: this.expenseForm.category,
+                expenseType: this.expenseForm.expenseType,
+                amount: String(this.cleanNumber(this.expenseForm.amount)),
+                date: this.expenseForm.date,
+                notes: this.expenseForm.notes || ''
+            });
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: payload });
+                const json = await res.json();
+
+                if (json.status === 'success') {
+                    alert("✅ Catatan pengeluaran kas berhasil disimpan!");
+                    this.expenseModalOpen = false;
+                    await this.fetchFinanceData(); // Auto sync data & re-render chart
+                } else {
+                    alert("❌ Gagal: " + json.message);
+                }
+            } catch (e) {
+                alert("Gagal koneksi ke database.");
+            } finally {
+                this.isSavingExpense = false;
+            }
+        },
+
+        async deleteExpenseItem(idExpense) {
+            if (!confirm(`Hapus catatan biaya ID: ${idExpense}?`)) return;
+
+            const payload = new URLSearchParams({
+                action: 'delete_expense',
+                idExpense: idExpense
+            });
+
+            try {
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: payload });
+                const json = await res.json();
+                if (json.status === 'success') {
+                    alert("✅ Catatan pengeluaran berhasil dihapus.");
+                    await this.fetchFinanceData();
+                } else {
+                    alert("❌ Gagal menghapus: " + json.message);
+                }
+            } catch (e) {
+                alert("Gagal menghubungi server.");
+            }
+        },
+
+        // 5. Render Chart.js Khusus Keuangan (Cashflow & Cost Allocation)
+        renderFinanceCharts() {
+            const destroyChart = (id) => {
+                if (charts[id]) {
+                    charts[id].destroy();
+                    delete charts[id];
+                }
+            };
+
+            const theme = { text: '#94a3b8', grid: 'rgba(255, 255, 255, 0.06)', font: "'Inter', sans-serif" };
+
+            // Chart 1: Bar/Line Cashflow Comparison
+            destroyChart('chartCashflowTrends');
+            const ctx1 = document.getElementById('chartCashflowTrends');
+            if (ctx1) {
+                const s = this.financialSummary;
+                charts['chartCashflowTrends'] = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Omzet Kotor (Gross)', 'Total Pengeluaran', 'Laba Bersih (Net)'],
+                        datasets: [{
+                            label: 'Nominal Kas (IDR)',
+                            data: [s.grossRevenue, s.totalExpenses, Math.max(0, s.netProfit)],
+                            backgroundColor: ['#10b981', '#f43f5e', '#00f2fe'],
+                            borderRadius: 8,
+                            barThickness: 32
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { 
+                                grid: { color: theme.grid }, 
+                                ticks: { callback: v => 'Rp ' + (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v.toLocaleString('id-ID')) } 
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // Chart 2: Doughnut Cost Allocation
+            destroyChart('chartExpenseDistribution');
+            const ctx2 = document.getElementById('chartExpenseDistribution');
+            if (ctx2) {
+                // Kelompokkan pengeluaran per kategori
+                const catMap = {};
+                (this.expensesList || []).forEach(e => {
+                    catMap[e.category] = (catMap[e.category] || 0) + (Number(e.amount) || 0);
+                });
+
+                const labels = Object.keys(catMap).length > 0 ? Object.keys(catMap) : ['Belum Ada Biaya'];
+                const values = Object.keys(catMap).length > 0 ? Object.values(catMap) : [1];
+                const colors = ['#8b5cf6', '#06b6d4', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#64748b'];
+
+                charts['chartExpenseDistribution'] = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: colors,
+                            borderWidth: 0,
+                            cutout: '70%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'right', labels: { boxWidth: 10, padding: 8 } }
+                        }
+                    }
+                });
+            }
+        },
+
+        // 6. Ekspor Laporan Laba Rugi CSV
+        exportFinanceCSV() {
+            if (!this.expensesList || this.expensesList.length === 0) {
+                alert("Belum ada catatan biaya untuk diexport!");
+                return;
+            }
+
+            let csv = "sep=;\n";
+            csv += "ID Pengeluaran;Tanggal;Uraian Biaya;Kategori;Klasifikasi;Nominal (IDR);Catatan / Invoice\n";
+
+            this.expensesList.forEach((e, idx) => {
+                const clean = t => `"${String(t || '').replace(/"/g, '""')}"`;
+                csv += `${clean(e.idExpense)};${clean(e.date)};${clean(e.title)};${clean(e.category)};${clean(e.expenseType)};${e.amount};${clean(e.notes)}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Laporan_Keuangan_Apollo_${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
         },
         // =================================================================
         // CUSTOMER ANALYSIS & MARKETING FUNNEL CONTROLLER
